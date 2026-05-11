@@ -6,20 +6,11 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/08 16:43:36 by leodum            #+#    #+#             */
-/*   Updated: 2026/05/08 17:09:43 by leodum           ###   ########.fr       */
+/*   Updated: 2026/05/11 12:30:18 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
-
-// - Your program must take the following arguments (all mandatory):
-	// 	`number_of_coders time_to_burnout time_to_compile time_to_debug 
-	// time_to_refactor number_of_compiles_required dongle_cooldown scheduler`
-	// check if number
-	// if negative no 
-	// if longer then int should fail
-	
-#include <stdio.h>
+#include "codexion.h"
 
 size_t	ft_strlen(const char *s)
 {
@@ -31,7 +22,7 @@ size_t	ft_strlen(const char *s)
 	return (i);
 }
 
-int ft_strncmp(const char *s1, const char *s2)
+int ft_strcmp(const char *s1, const char *s2)
 {
 	int i;
 
@@ -56,12 +47,12 @@ int check_priority_order(char *args)
 		return (0);
 	if (ft_strlen(args) == 3)
 	{
-		if (!ft_strncmp(args, "edf"))
+		if (!ft_strcmp(args, "edf"))
 			return (0);
 	}
 	else if (ft_strlen(args) == 4)
 	{
-		if (!ft_strncmp(args, "fifo"))
+		if (!ft_strcmp(args, "fifo"))
 			return (0);
 	}
 	return (1);
@@ -107,22 +98,4 @@ int	only_int_allowed(char **str)
 		return (0);
 
 	return (1);
-}
-
-int main(int argc, char **argv)
-{
-	if (argc != 9)
-	{
-		printf("You need to provide 7 int + type of priority check (e.g. fifo or edf)\n");
-		return (1);
-	}
-
-	if (!only_int_allowed(argv))
-	{
-		printf("Invalid arguments\n");
-		return (1);
-	}
-	else
-		printf("The program is working and is now going to start");
-	return (0);
 }

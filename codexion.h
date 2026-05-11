@@ -1,18 +1,26 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   codexion.h                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/05/11 12:17:04 by leodum            #+#    #+#             */
+/*   Updated: 2026/05/11 12:45:45 by leodum           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+
+
 
 #ifndef CODEXION_H
 # define FT_PRINTF_H
 
-# include <string.h>
-# include <stdlib.h>
-# include <unistd.h>
-# include <limits.h>
-# include <stdio.h>
-# include <stdint.h>
-# include <stdio.h>
-# include <stdarg.h>
-# include <unistd.h>
-# include <stdlib.h>
-# include <limits.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <pthread.h>
+#include <stdint.h>
 
 // What do i need my coder to be
 // need to learn about the heap
@@ -22,9 +30,11 @@
 
 typedef struct coder {
 	// Just the number of the coder but to see if this is interesting or not
+	// ?
 	int nb;
 	// maybe need to do a hierachy between them especially to know which one has the priority
-	int rank;
+	// ?
+	int priority_rank;
 	// for status could be equivalent to compile debug and refactor
 	// and to be equal to 0 1 or 2
 	int status;
@@ -33,22 +43,34 @@ typedef struct coder {
 	// 1 when on
 	// always need to check if the other is on 
 	// need to see what could be the most efficient
-	int debug;
-	int refac;
-	int comp;
-	int burnout_time;
-	int cooldown;
+	int time_to_burnout;
+	int time_to_compile;
+	int time_to_debug;
+	int time_to_refactor;
 	// to know how many time the coder has compiled already
 	// to be decreased until 0
-	int compiled;
+	int nb_of_compiles;
+	int time_to_cooldown;
+
 	// to check how many dongle they have in their hand
+	// ? 
 	int dongle;
+}	t_coder;
 
-}
+// struct dongle {
+// 	int rank;
+// } t_dongle;
 
-struct dongle {
-	int rank;
-}
+
+size_t	ft_strlen(const char *s);
+int ft_strcmp(const char *s1, const char *s2);
+int check_priority_order(char *args);
+int is_valid_number(char *args);
+int only_int_allowed(char **str);
+
+void* creating_coder(void *i);
+int ft_atoi(const char *nptr);
+int main(int argc, char **argv);
 
 
 
