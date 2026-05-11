@@ -4,38 +4,37 @@
 #include <pthread.h>
 #include <stdint.h>
 
+int mails = 0;
+pthread_mutex_t mutex;
 
-void* creating_coder(void *i)
+void* routine()
 {
-	pthread_mutex_t c_lock = PTHREAD_MUTEX_INITIALIZER;
-	long index = (long) i;
-	pthread_mutex_lock(&c_lock);
-	printf("Creating coder %ld\n", index);
-	pthread_mutex_unlock(&c_lock);
-	return (void *)(index + 1);
+	for (int i = 0; i < 100000000; i++)
+	{		
+		pthread_mutex_lock(&mutex);
+		mails++;
+		pthread_mutex_unlock(&mutex);
+	}
+	return NULL;
 }
 
 int main(int argc, char **argv)
 {
-	int coders = 40;
-	pthread_t t[coders];
-	long i = 0;
-	
 
-	while (i != coders)
-	{
-		if (pthread_create(&t[i], NULL, &creating_coder, (void *) i) != 0)
+	pthread_t t1, t2;
+	pthread_mutex_init(&mutex, NULL);
+
+		if (pthread_create(&t1, NULL, &routine, NULL) != 0)
 			return 1;
-		i++;
-	}
-	i = 0;
-	void* result;
-	while (i != coders)
-	{
-		if (pthread_join(t[i], &result) != 0)
+		if (pthread_create(&t2, NULL, &routine, NULL) != 0)
 			return 1;
-		printf("Thread %ld returned %ld\n", i, (long)result);
-		i++;
-	}
+
+		if (pthread_join(t1, NULL) != 0)
+			return 2;
+		if (pthread_join(t2, NULL) != 0)
+			return 2;
+	
+	pthread_mutex_destroy(&mutex);
+	printf("Numbers of mails: %d\n", mails);
 	return 0;
 }

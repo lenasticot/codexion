@@ -6,7 +6,7 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/11 12:17:04 by leodum            #+#    #+#             */
-/*   Updated: 2026/05/11 12:45:45 by leodum           ###   ########.fr       */
+/*   Updated: 2026/05/11 16:27:28 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,12 @@
 #ifndef CODEXION_H
 # define FT_PRINTF_H
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <pthread.h>
-#include <stdint.h>
+# include <stdlib.h>
+# include <stdio.h>
+# include <unistd.h>
+# include <pthread.h>
+# include <stdint.h>
+# include <sys/time.h>
 
 // What do i need my coder to be
 // need to learn about the heap
@@ -57,10 +58,16 @@ typedef struct coder {
 	int dongle;
 }	t_coder;
 
+// To prevent coders from duplicating dongles, you must protect each dongle’s state
+// with a mutex (pthread_mutex_t). A condition variable (pthread_cond_t) may be
+// used to manage waiting queues.
+
 // struct dongle {
 // 	int rank;
 // } t_dongle;
 
+// Logging must be serialized so that two messages never interleave on a single line
+// (use a mutex to protect output).
 
 size_t	ft_strlen(const char *s);
 int ft_strcmp(const char *s1, const char *s2);

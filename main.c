@@ -6,7 +6,7 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/11 12:16:55 by leodum            #+#    #+#             */
-/*   Updated: 2026/05/11 12:54:41 by leodum           ###   ########.fr       */
+/*   Updated: 2026/05/11 17:50:55 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,17 +43,25 @@ void* creating_threads(void *args)
 {
 	t_coder *coder = (t_coder *) args;
 	printf("Creating coder %i which time to burnout is now %i\n", coder->nb, coder->time_to_burnout);
+	sleep(10);
 	return NULL;
 }
 
 int main(int argc, char **argv)
 {
+	// getting time and converting it to mili
+	// converting time to mili
+	struct timeval current_time;
+	gettimeofday(&current_time, NULL);
+	long int mili = (current_time.tv_sec * 1000) + (current_time.tv_usec / 1000);
+	printf("seconds: %ld\nmicro seconds: %ld\nmiliseconds: %ld\n", current_time.tv_sec, current_time.tv_usec, mili);
+	
+	// parsing part
 	if (argc != 9)
 	{
 		printf("You need to provide 7 int + type of priority check (e.g. fifo or edf)\n");
 		return (1);
 	}
-
 	if (!only_int_allowed(argv))
 	{
 		printf("Invalid arguments\n");
@@ -62,7 +70,7 @@ int main(int argc, char **argv)
 	else
 		printf("The program is working and is now going to start\n");
 	
-
+	// creating coder struct
 	int nb_coders = ft_atoi(argv[1]);
 	t_coder coders[nb_coders];
 	pthread_t threads[nb_coders];
@@ -82,14 +90,16 @@ int main(int argc, char **argv)
 		i++;
 	}
 	i = 0;
+	// sending the coder into each thread
 	while (i < nb_coders)
 	{
 		if (pthread_create(&threads[i], NULL, &creating_threads, (void *) &coders[i]) != 0)
 			return 1;
+		// then here i could manipulate each coder
 		i++;
 	}
 	i = 0;
-
+	// closing the coder part
 	while (i < nb_coders)
 	{
 		if (pthread_join(threads[i], NULL) != 0)
@@ -97,5 +107,9 @@ int main(int argc, char **argv)
 		printf("Thread %ld returned\n", i);
 		i++;
 	}
+	struct timeval new_time;
+	gettimeofday(&new_time, NULL);
+	long int new_mili = (new_time.tv_sec / 1000) + (new_time.tv_usec * 1000);
+	printf("seconds: %ld\nmicro seconds: %ld\nmiliseconds: %ld\n", new_time.tv_sec, new_time.tv_usec, new_mili);
 	return 0;
 }
