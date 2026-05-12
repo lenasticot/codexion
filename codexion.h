@@ -6,7 +6,7 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/11 12:17:04 by leodum            #+#    #+#             */
-/*   Updated: 2026/05/11 16:27:28 by leodum           ###   ########.fr       */
+/*   Updated: 2026/05/12 16:33:21 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,13 @@
 
 
 // need to work also on time and managing milliseconds
+
+typedef struct dongle {
+	int rank;
+	// status: 0 if free / 1 if taken
+	int status;
+	pthread_mutex_t lock;
+} t_dongle;
 
 typedef struct coder {
 	// Just the number of the coder but to see if this is interesting or not
@@ -55,16 +62,16 @@ typedef struct coder {
 
 	// to check how many dongle they have in their hand
 	// ? 
-	int dongle;
+	int l_dongle;
+	int r_dongle;
+	t_dongle *dongle;
 }	t_coder;
 
 // To prevent coders from duplicating dongles, you must protect each dongle’s state
 // with a mutex (pthread_mutex_t). A condition variable (pthread_cond_t) may be
 // used to manage waiting queues.
 
-// struct dongle {
-// 	int rank;
-// } t_dongle;
+
 
 // Logging must be serialized so that two messages never interleave on a single line
 // (use a mutex to protect output).
@@ -78,6 +85,8 @@ int only_int_allowed(char **str);
 void* creating_coder(void *i);
 int ft_atoi(const char *nptr);
 int main(int argc, char **argv);
+
+int dongle_management(t_coder *coder, t_dongle *dongle);
 
 
 
