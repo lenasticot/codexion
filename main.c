@@ -6,7 +6,7 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/11 12:16:55 by leodum            #+#    #+#             */
-/*   Updated: 2026/05/12 16:36:37 by leodum           ###   ########.fr       */
+/*   Updated: 2026/05/13 17:27:56 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,12 +39,11 @@ int	ft_atoi(const char *nptr)
 }
 
 
-void* creating_threads(void *args)
+void* launching_routine(void *args)
 {
 	t_coder *coder = (t_coder *) args;
-	printf("Creating coder %i which time to burnout is now %i\n", coder->nb, coder->time_to_burnout);
-	dongle_management(coder, coder->dongle);
-	sleep(10);
+	printf("Coder %i will start their routine\n", coder->nb);
+	dongle_management(coder, coder->l_dongle, coder->r_dongle);
 	return NULL;
 }
 
@@ -90,9 +89,10 @@ int main(int argc, char **argv)
 		coder[i].time_to_refactor = ft_atoi(argv[5]);
 		coder[i].nb_of_compiles = ft_atoi(argv[6]);
 		coder[i].time_to_cooldown = ft_atoi(argv[7]);
-		coder[i].l_dongle = 0;
-		coder[i].r_dongle = 0;
-		coder[i].dongle = &dongle[i];
+		coder[i].nb_dongle = 0;
+		coder[i].l_dongle = &dongle[i];
+		coder[i].r_dongle = &dongle[(i - 1 + nb_coders) % nb_coders];
+		// coder[i].dongle = &dongle[i];
 		dongle[i].rank = i;
 		dongle[i].status = 0;
 		if (pthread_mutex_init(&dongle[i].lock, NULL) != 0)
@@ -103,14 +103,12 @@ int main(int argc, char **argv)
 	// sending the coder into each thread
 	while (i < nb_coders)
 	{
-		if (pthread_create(&threads[i], NULL, &creating_threads, (void *) &coder[i]) != 0)
+		if (pthread_create(&threads[i], NULL, &launching_routine, (void *) &coder[i]) != 0)
 			return 1;
-		// dongle_management(&coder[i], &dongle[i]);
-		// then here i could manipulate each coder
 		i++;
 	}
-	
 	i = 0;
+	
 	// closing the coder part
 	while (i < nb_coders)
 	{
@@ -119,8 +117,6 @@ int main(int argc, char **argv)
 		printf("Thread %ld returned\n", i);
 		i++;
 	}
-
-
 	struct timeval new_time;
 	gettimeofday(&new_time, NULL);
 	long int new_mili = (new_time.tv_sec * 1000) + (new_time.tv_usec / 1000);

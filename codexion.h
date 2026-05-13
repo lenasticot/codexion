@@ -6,7 +6,7 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/11 12:17:04 by leodum            #+#    #+#             */
-/*   Updated: 2026/05/12 16:33:21 by leodum           ###   ########.fr       */
+/*   Updated: 2026/05/13 17:03:08 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,12 +59,13 @@ typedef struct coder {
 	// to be decreased until 0
 	int nb_of_compiles;
 	int time_to_cooldown;
+	int nb_dongle;
 
 	// to check how many dongle they have in their hand
 	// ? 
-	int l_dongle;
-	int r_dongle;
-	t_dongle *dongle;
+	t_dongle *l_dongle;
+	t_dongle *r_dongle;
+	// t_dongle *dongle;
 }	t_coder;
 
 // To prevent coders from duplicating dongles, you must protect each dongle’s state
@@ -82,11 +83,11 @@ int check_priority_order(char *args);
 int is_valid_number(char *args);
 int only_int_allowed(char **str);
 
-void* creating_coder(void *i);
+void* launching_routine(void *args);
 int ft_atoi(const char *nptr);
 int main(int argc, char **argv);
 
-int dongle_management(t_coder *coder, t_dongle *dongle);
+int dongle_management(t_coder *coder, t_dongle *l_dongle, t_dongle *r_dongle);
 
 
 
