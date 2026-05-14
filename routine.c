@@ -6,60 +6,57 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/12 13:38:25 by leodum            #+#    #+#             */
-/*   Updated: 2026/05/13 17:28:42 by leodum           ###   ########.fr       */
+/*   Updated: 2026/05/14 17:00:06 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
 
-int dongle_management(t_coder *coder, t_dongle *l_dongle, t_dongle *r_dongle)
+int take_dongle(t_coder *coder, t_dongle *dongle, pthread_cond_t condDongle)
 {
-	// can add release dongle also but maybe to see that later
-
-	// you could also check for like what are left and right doing
-	// and move over to something else directly if they are already compiling
-	// but are they keeping the dongle if they are doing smething else?
-	// Maybe, then that means its not needed
-
-	// so yesterday i learned that doing those checked might actually create some race conditions
-	// the check here is wrong because the status nb are wrong
- 
-		// check if dongle is taken ? 
-		// or just try to grab it and if not possible it would wait?
-		// could be nice to have something to says if not possible
 	while(coder->nb_of_compiles != 0)
 	{
-			pthread_mutex_lock(&l_dongle->lock);
-			if (l_dongle->status == 0)
+			pthread_mutex_lock(&dongle->lock);
+			while(dongle->status == 1)
 			{
+				printf("Coder %i is waiting for its other dongle...\n", coder->nb);
+				pthread_cond_wait(&condDongle, &dongle->lock);
+				
+			}
 				printf("%i has taken a dongle\n", coder->nb);
-				l_dongle->status = 1;
+				dongle->status = 1;
 				coder->nb_dongle++;
-			}
-			pthread_mutex_unlock(&l_dongle->lock);		
+			pthread_mutex_unlock(&dongle->lock);
+	}
+}
 
+
+int release_dongle(t_coder *coder, t_dongle *dongle, pthread_cond_t condDongle)
+{
+	
+	pthread_mutex_lock(&dongle->lock);
+	dongle->status = 0;
+	coder->nb_dongle--;
+	pthread_mutex_unlock(&dongle->lock);
+	pthread_cond_broadcast(&condDongle);
+}
+
+int dongle_management(t_coder *coder, t_dongle *l_dongle, t_dongle *r_dongle)
+{
+	pthread_cond_t condDongle;
+	
+	while(coder->nb_of_compiles != 0)
+	{
 		
-			pthread_mutex_lock(&r_dongle->lock);
-			if (r_dongle->status == 0)
-			{
-			printf("%i has taken a dongle\n", coder->nb);
-			r_dongle->status = 1;
-			coder->nb_dongle++;
-			}
-			pthread_mutex_unlock(&r_dongle->lock);			
-
+		take_dongle(coder, l_dongle, condDongle);		
+		take_dongle(coder, r_dongle, condDongle);
 		if (coder->nb_dongle == 2)
 		{
 			printf("%i is compiling\n", coder->nb);
 			sleep(3);
 			coder->nb_of_compiles--;
-			pthread_mutex_lock(&r_dongle->lock);
-			r_dongle->status = 0;
-			pthread_mutex_unlock(&r_dongle->lock);
-			pthread_mutex_lock(&l_dongle->lock);
-			l_dongle->status = 0;
-			pthread_mutex_unlock(&l_dongle->lock);
-			coder->nb_dongle = 0;
+			release_dongle(coder, l_dongle, condDongle);
+			release_dongle(coder, r_dongle, condDongle);
 		}
 	}		
 	return 0;

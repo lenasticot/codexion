@@ -6,15 +6,13 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/11 12:17:04 by leodum            #+#    #+#             */
-/*   Updated: 2026/05/13 17:03:08 by leodum           ###   ########.fr       */
+/*   Updated: 2026/05/14 12:47:14 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
-
-
 #ifndef CODEXION_H
-# define FT_PRINTF_H
+# define CODEXION_H
 
 # include <stdlib.h>
 # include <stdio.h>
@@ -23,11 +21,19 @@
 # include <stdint.h>
 # include <sys/time.h>
 
-// What do i need my coder to be
-// need to learn about the heap
+// need to learn about the heap and queue
 
 
 // need to work also on time and managing milliseconds
+
+typedef struct args {
+	int time_to_burnout;
+	int time_to_compile;
+	int time_to_debug;
+	int time_to_refactor;
+	int nb_of_compiles;
+	int time_to_cooldown;
+} t_args;
 
 typedef struct dongle {
 	int rank;
@@ -38,10 +44,10 @@ typedef struct dongle {
 
 typedef struct coder {
 	// Just the number of the coder but to see if this is interesting or not
-	// ?
 	int nb;
 	// maybe need to do a hierachy between them especially to know which one has the priority
 	// ?
+	// might be what i will do in the heap and queue thing so this might not be that needed atm
 	int priority_rank;
 	// for status could be equivalent to compile debug and refactor
 	// and to be equal to 0 1 or 2
