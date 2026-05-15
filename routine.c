@@ -35,9 +35,9 @@ int release_dongle(t_coder *coder, t_dongle *dongle)
 {
 	pthread_mutex_lock(&dongle->lock);
 	if (coder->nb_dongle == 2)
-		printf("%i is now releasing its second dongle\n", coder->nb);
-	else
 		printf("%i is now releasing its first dongle\n", coder->nb);
+	else
+		printf("%i is now releasing its second dongle\n", coder->nb);
 	dongle->status = 0;
 	coder->nb_dongle--;
 
@@ -50,8 +50,17 @@ int dongle_management(t_coder *coder, t_dongle *l_dongle, t_dongle *r_dongle)
 	while(coder->args->nb_of_compiles != 0)
 	{
 		printf("Coder %i will try to take a dongle\n", coder->nb);
-		take_dongle(coder, l_dongle);		
-		take_dongle(coder, r_dongle);
+		// resource hierarchy solution
+		if (l_dongle->rank > r_dongle->rank)
+		{
+			take_dongle(coder, l_dongle);
+			take_dongle(coder, r_dongle);
+		}
+		else
+		{
+			take_dongle(coder, r_dongle);
+			take_dongle(coder, l_dongle);
+		}
 		if (coder->nb_dongle == 2)
 		{
 			printf("%i is compiling\n", coder->nb);
