@@ -6,7 +6,7 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/11 12:16:55 by leodum            #+#    #+#             */
-/*   Updated: 2026/05/13 17:27:56 by leodum           ###   ########.fr       */
+/*   Updated: 2026/05/15 17:32:03 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,30 +73,36 @@ int main(int argc, char **argv)
 	
 	// creating coder struct
 	int nb_coders = ft_atoi(argv[1]);
+	t_args args[nb_coders];
 	t_coder coder[nb_coders];
 	pthread_mutex_t mutex[nb_coders];
 	t_dongle dongle[nb_coders];
+	t_sim sim;
 	pthread_t threads[nb_coders];
 	long i = 0;
+
 	while (i < nb_coders)
 	{
 		coder[i].nb = i;
 		coder[i].priority_rank = i;
-		coder[i].status = 0; //0 = compile 1= debug 2=refactoring
-		coder[i].time_to_burnout = ft_atoi(argv[2]); //might need to check the time and the ms thingy here
-		coder[i].time_to_compile = ft_atoi(argv[3]);
-		coder[i].time_to_debug = ft_atoi(argv[4]);
-		coder[i].time_to_refactor = ft_atoi(argv[5]);
-		coder[i].nb_of_compiles = ft_atoi(argv[6]);
-		coder[i].time_to_cooldown = ft_atoi(argv[7]);
+		args[i].nb_coders = nb_coders;
+		args[i].time_to_burnout = ft_atoi(argv[2]); //might need to check the time and the ms thingy here
+		args[i].time_to_compile = ft_atoi(argv[3]);
+		args[i].time_to_debug = ft_atoi(argv[4]);
+		args[i].time_to_refactor = ft_atoi(argv[5]);
+		args[i].nb_of_compiles = ft_atoi(argv[6]);
+		args[i].time_to_cooldown = ft_atoi(argv[7]);
 		coder[i].nb_dongle = 0;
 		coder[i].l_dongle = &dongle[i];
 		coder[i].r_dongle = &dongle[(i - 1 + nb_coders) % nb_coders];
-		// coder[i].dongle = &dongle[i];
+		coder[i].sim = &sim;
+		coder[i].args = &args[i];
 		dongle[i].rank = i;
 		dongle[i].status = 0;
+
 		if (pthread_mutex_init(&dongle[i].lock, NULL) != 0)
 			return 1;
+		pthread_cond_init(&dongle[i].condDongle, NULL);
 		i++;
 	}
 	i = 0;

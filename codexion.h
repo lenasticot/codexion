@@ -6,7 +6,7 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/11 12:17:04 by leodum            #+#    #+#             */
-/*   Updated: 2026/05/14 12:47:14 by leodum           ###   ########.fr       */
+/*   Updated: 2026/05/15 16:59:03 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,9 @@
 
 
 // need to work also on time and managing milliseconds
-
+// do i need individual args or not
 typedef struct args {
+	int nb_coders; // might be good to keep the nb of coders so then easy to know how many are in the linked list?
 	int time_to_burnout;
 	int time_to_compile;
 	int time_to_debug;
@@ -35,11 +36,19 @@ typedef struct args {
 	int time_to_cooldown;
 } t_args;
 
+// How does each thread know the simulation start time?
+// How does a monitor detect that someone burned out?
+// How do threads signal that the simulation should stop?
+typedef struct sim {
+	pthread_cond_t otherDongle;
+} t_sim;
+
 typedef struct dongle {
 	int rank;
 	// status: 0 if free / 1 if taken
 	int status;
 	pthread_mutex_t lock;
+	pthread_cond_t condDongle;
 } t_dongle;
 
 typedef struct coder {
@@ -49,28 +58,13 @@ typedef struct coder {
 	// ?
 	// might be what i will do in the heap and queue thing so this might not be that needed atm
 	int priority_rank;
-	// for status could be equivalent to compile debug and refactor
-	// and to be equal to 0 1 or 2
-	int status;
-	// or they have individual debug, refac and compile
-	// 0 when off
-	// 1 when on
-	// always need to check if the other is on 
-	// need to see what could be the most efficient
-	int time_to_burnout;
-	int time_to_compile;
-	int time_to_debug;
-	int time_to_refactor;
-	// to know how many time the coder has compiled already
-	// to be decreased until 0
-	int nb_of_compiles;
-	int time_to_cooldown;
 	int nb_dongle;
-
 	// to check how many dongle they have in their hand
 	// ? 
 	t_dongle *l_dongle;
 	t_dongle *r_dongle;
+	t_args *args;
+	t_sim *sim;
 	// t_dongle *dongle;
 }	t_coder;
 
