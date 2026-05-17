@@ -6,7 +6,7 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/11 12:16:55 by leodum            #+#    #+#             */
-/*   Updated: 2026/05/15 17:32:03 by leodum           ###   ########.fr       */
+/*   Updated: 2026/05/17 14:39:15 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,17 @@ int	ft_atoi(const char *nptr)
 	}
 	return (result * sign);
 }
+long int get_time_ms()
+{
+	struct timeval t;
+    gettimeofday(&t, NULL);
+    return (t.tv_sec * 1000) + (t.tv_usec / 1000);
+}
 
+long int elapsed_ms(long int start_ms)
+{
+	return get_time_ms() - start_ms;
+}
 
 void* launching_routine(void *args)
 {
@@ -47,17 +57,34 @@ void* launching_routine(void *args)
 	return NULL;
 }
 
+void* monitor_routine(void *monitor)
+{
+	t_sim *sim = (t_sim *) monitor;
+	int i = 0;
+	while(1)
+	{
+		while(i <= sim->nb_coders)
+		{
+			if (sim->coder[i].time_to_burnout > elapsed_ms(sim->start_time))
+			{
+				printf("Coder X has burnout\n");
+				sim->ongoing = 1;
+				return 0;
+			}
+
+			i++;
+		}
+		printf("No one has burnout, continuing routine\n");
+		i = 0;		
+	}
+	return NULL;
+}
+
 int main(int argc, char **argv)
 {
 	
 	// getting time and converting it to mili
 	// converting time to mili
-	struct timeval current_time;
-	gettimeofday(&current_time, NULL);
-	long int mili = (current_time.tv_sec * 1000) + (current_time.tv_usec / 1000);
-	printf("seconds: %ld\nmicro seconds: %ld\nmiliseconds: %ld\n", current_time.tv_sec, current_time.tv_usec, mili);
-	
-	// parsing part
 	if (argc != 9)
 	{
 		printf("You need to provide 7 int + type of priority check (e.g. fifo or edf)\n");
@@ -73,39 +100,52 @@ int main(int argc, char **argv)
 	
 	// creating coder struct
 	int nb_coders = ft_atoi(argv[1]);
-	t_args args[nb_coders];
+	t_args args;
 	t_coder coder[nb_coders];
 	pthread_mutex_t mutex[nb_coders];
 	t_dongle dongle[nb_coders];
 	t_sim sim;
 	pthread_t threads[nb_coders];
 	long i = 0;
-
+	// initializing args
+ 	args.nb_coders = nb_coders;
+	args.time_to_burnout = ft_atoi(argv[2]); //might need to check the time and the ms thingy here
+	args.time_to_compile = ft_atoi(argv[3]);
+	args.time_to_debug = ft_atoi(argv[4]);
+	args.time_to_refactor = ft_atoi(argv[5]);
+	args.time_to_cooldown = ft_atoi(argv[7]);
+	// initializing coders /dongle
 	while (i < nb_coders)
 	{
 		coder[i].nb = i;
 		coder[i].priority_rank = i;
-		args[i].nb_coders = nb_coders;
-		args[i].time_to_burnout = ft_atoi(argv[2]); //might need to check the time and the ms thingy here
-		args[i].time_to_compile = ft_atoi(argv[3]);
-		args[i].time_to_debug = ft_atoi(argv[4]);
-		args[i].time_to_refactor = ft_atoi(argv[5]);
-		args[i].nb_of_compiles = ft_atoi(argv[6]);
-		args[i].time_to_cooldown = ft_atoi(argv[7]);
 		coder[i].nb_dongle = 0;
+		coder[i].nb_of_compiles = ft_atoi(argv[6]);
+		coder[i].time_to_burnout = ft_atoi(argv[2]); 
 		coder[i].l_dongle = &dongle[i];
 		coder[i].r_dongle = &dongle[(i - 1 + nb_coders) % nb_coders];
 		coder[i].sim = &sim;
-		coder[i].args = &args[i];
+		coder[i].args = &args;
 		dongle[i].rank = i;
 		dongle[i].status = 0;
-
 		if (pthread_mutex_init(&dongle[i].lock, NULL) != 0)
 			return 1;
 		pthread_cond_init(&dongle[i].condDongle, NULL);
 		i++;
 	}
 	i = 0;
+	// initializing sim thread
+	sim.start_time = get_time_ms();
+	sim.nb_coders = nb_coders;
+	sim.coder = coder;
+	sim.args = &args;
+	sim.ongoing = 0;
+	if (pthread_mutex_init(&sim.print_message, NULL) != 0)
+		return 1;
+	//creating the monitor
+	pthread_t monitor;
+	if (pthread_create(&monitor, NULL, &monitor_routine, (void *) &sim) != 0)
+		return 1;
 	// sending the coder into each thread
 	while (i < nb_coders)
 	{
@@ -123,9 +163,7 @@ int main(int argc, char **argv)
 		printf("Thread %ld returned\n", i);
 		i++;
 	}
-	struct timeval new_time;
-	gettimeofday(&new_time, NULL);
-	long int new_mili = (new_time.tv_sec * 1000) + (new_time.tv_usec / 1000);
-	printf("seconds: %ld\nmicro seconds: %ld\nmiliseconds: %ld\n", new_time.tv_sec, new_time.tv_usec, new_mili);
+	if (pthread_join(monitor, NULL) != 0)
+		return 1;
 	return 0;
 }
