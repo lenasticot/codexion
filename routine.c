@@ -6,7 +6,7 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/12 13:38:25 by leodum            #+#    #+#             */
-/*   Updated: 2026/05/17 14:29:54 by leodum           ###   ########.fr       */
+/*   Updated: 2026/05/17 14:45:30 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,9 @@ int take_dongle(t_coder *coder, t_dongle *dongle)
 	print_status(coder, "has taken a dongle");
 }
 
-
 int release_dongle(t_coder *coder, t_dongle *dongle)
 {
+	// maybe here something like if 2 release both to reduce nb of lines
 	pthread_mutex_lock(&dongle->lock);
 	dongle->status = 0;
 	usleep(coder->args->time_to_cooldown * 1000);

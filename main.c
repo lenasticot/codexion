@@ -6,7 +6,7 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/11 12:16:55 by leodum            #+#    #+#             */
-/*   Updated: 2026/05/17 14:39:15 by leodum           ###   ########.fr       */
+/*   Updated: 2026/05/17 14:46:00 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,7 @@ void* launching_routine(void *args)
 
 void* monitor_routine(void *monitor)
 {
+	// need to understand how to calculate burnout
 	t_sim *sim = (t_sim *) monitor;
 	int i = 0;
 	while(1)
@@ -82,9 +83,6 @@ void* monitor_routine(void *monitor)
 
 int main(int argc, char **argv)
 {
-	
-	// getting time and converting it to mili
-	// converting time to mili
 	if (argc != 9)
 	{
 		printf("You need to provide 7 int + type of priority check (e.g. fifo or edf)\n");

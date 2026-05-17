@@ -6,7 +6,7 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/11 12:17:04 by leodum            #+#    #+#             */
-/*   Updated: 2026/05/17 14:29:20 by leodum           ###   ########.fr       */
+/*   Updated: 2026/05/17 14:47:34 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,13 +21,12 @@
 # include <stdint.h>
 # include <sys/time.h>
 
-// need to learn about the heap and queue
+
 
 typedef struct sim t_sim;
-// need to work also on time and managing milliseconds
-// do i need individual args or not
+
 typedef struct args {
-	int nb_coders; // might be good to keep the nb of coders so then easy to know how many are in the linked list?
+	int nb_coders; 
 	int time_to_burnout;
 	int time_to_compile;
 	int time_to_debug;
@@ -35,10 +34,6 @@ typedef struct args {
 
 	int time_to_cooldown;
 } t_args;
-
-// How does each thread know the simulation start time?
-// How does a monitor detect that someone burned out?
-// How do threads signal that the simulation should stop?
 
 
 typedef struct dongle {
@@ -50,7 +45,6 @@ typedef struct dongle {
 } t_dongle;
 
 typedef struct coder {
-	// Just the number of the coder but to see if this is interesting or not
 	int nb;
 	// maybe need to do a hierachy between them especially to know which one has the priority
 	// ?
@@ -63,15 +57,21 @@ typedef struct coder {
 	t_dongle *r_dongle;
 	t_args *args;
 	t_sim *sim;
-
+	// need to add smth like last time of compiling
+	// then it will be my calculation for burnout
+	// like if last time of compiling is 1234
+	//burnout time is 400
+	// then need to do last time of compiling + burnout time
+	// = coder_burnout
+	// and that should be what i check about in the monitor?
 }	t_coder;
 
 typedef struct sim {
 	long int start_time;
-	int nb_coders; // new TBI
+	int nb_coders;
 	pthread_mutex_t print_message;
-	t_coder *coder; //new TBI 
-	t_args *args; //new TBI
+	t_coder *coder;  
+	t_args *args; 
 	int ongoing;
 } t_sim;
 
