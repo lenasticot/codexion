@@ -6,7 +6,7 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/11 12:17:04 by leodum            #+#    #+#             */
-/*   Updated: 2026/05/18 14:41:23 by leodum           ###   ########.fr       */
+/*   Updated: 2026/05/18 17:20:43 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,13 +58,6 @@ typedef struct coder {
 	t_dongle *r_dongle;
 	t_args *args;
 	t_sim *sim;
-	// need to add smth like last time of compiling
-	// then it will be my calculation for burnout
-	// like if last time of compiling is 1234
-	//burnout time is 400
-	// then need to do last time of compiling + burnout time
-	// = coder_burnout
-	// and that should be what i check about in the monitor?
 }	t_coder;
 
 typedef struct sim {
@@ -74,7 +67,6 @@ typedef struct sim {
 	t_coder *coder;  
 	t_args *args; 
 	int ongoing;
-	pthread_mutex_t lockBurnout;
 	t_dongle *dongles;
 } t_sim;
 
@@ -93,6 +85,8 @@ int print_status(t_coder *coder, char *message);
 
 int dongle_management(t_coder *coder, t_dongle *l_dongle, t_dongle *r_dongle);
 
-
+void *monitor_routine(void *monitor);
+int check_compilation_nb(t_sim *sim);
+int check_simulation_ongoing(t_sim *sim);
 
 #endif

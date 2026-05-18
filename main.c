@@ -6,7 +6,7 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/11 12:16:55 by leodum            #+#    #+#             */
-/*   Updated: 2026/05/18 14:43:28 by leodum           ###   ########.fr       */
+/*   Updated: 2026/05/18 17:46:31 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,43 +57,6 @@ void* launching_routine(void *args)
 	return NULL;
 }
 
-void* monitor_routine(void *monitor)
-{
-	// need to understand how to calculate burnout
-	t_sim *sim = (t_sim *) monitor;
-	int i = 0;
-	while(1)
-	{
-		usleep(1000);
-		while(i < sim->nb_coders)
-		{
-			if (get_time_ms() - sim->coder[i].last_time_compiled  >= sim->args->time_to_burnout)
-			{
-				pthread_mutex_lock(&sim->lockBurnout);
-				printf("%ld Coder %i has burnout\n", elapsed_ms(sim->start_time), sim->coder[i].nb);
-				sim->ongoing = 1;
-				pthread_mutex_unlock(&sim->lockBurnout);
-				i = 0;
-				while(i < sim->nb_coders)
-				{
-					pthread_cond_broadcast(&sim->dongles[i].condDongle);	
-					i++;
-				}
-				
-				return NULL;
-				// need to add something so they know
-				// probably the broadcast or smth
-			}
-			i++;
-		}
-
-		printf("No one has burnout, continuing routine\n");
-		// maybe add here a check to see if everyone is still compiling? 
-		// or need to change the while loop system
-		i = 0;		
-	}
-	return NULL;
-}
 
 int main(int argc, char **argv)
 {
@@ -118,7 +81,6 @@ int main(int argc, char **argv)
 	t_dongle dongle[nb_coders];
 	t_sim sim;
 	pthread_t threads[nb_coders];
-	pthread_mutex_t lockBurnout;
 	long i = 0;
 	sim.dongles = dongle;
 	// initializing args
@@ -155,8 +117,6 @@ int main(int argc, char **argv)
 	sim.coder = coder;
 	sim.args = &args;
 	sim.ongoing = 0;
-	if (pthread_mutex_init(&sim.lockBurnout, NULL) != 0)
-		return 1;
 	if (pthread_mutex_init(&sim.print_message, NULL) != 0)
 		return 1;
 	//creating the monitor

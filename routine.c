@@ -6,7 +6,7 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/12 13:38:25 by leodum            #+#    #+#             */
-/*   Updated: 2026/05/18 14:39:08 by leodum           ###   ########.fr       */
+/*   Updated: 2026/05/18 17:53:31 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,9 @@
 
 int print_status(t_coder *coder, char *message)
 {
+	if (!check_simulation_ongoing(coder->sim))
+		return 1;
+
     pthread_mutex_lock(&coder->sim->print_message);
     printf("%ld %i %s\n", elapsed_ms(coder->sim->start_time), coder->nb, message);
 	pthread_mutex_unlock(&coder->sim->print_message);
@@ -21,13 +24,19 @@ int print_status(t_coder *coder, char *message)
 
 int take_dongle(t_coder *coder, t_dongle *dongle)
 {
+	
+	if (!check_simulation_ongoing(coder->sim))
+		return 1;
 	pthread_mutex_lock(&dongle->lock);
 	while(dongle->status == 1)
-		pthread_cond_wait(&dongle->condDongle, &dongle->lock);
-	if (coder->sim->ongoing == 1)
 	{
-		pthread_mutex_unlock(&dongle->lock);
-		return 1;
+		pthread_cond_wait(&dongle->condDongle, &dongle->lock);
+		if (!check_simulation_ongoing(coder->sim))
+		{
+			pthread_mutex_unlock(&dongle->lock);
+			return 1;
+		}
+			return 1;
 	}
 	dongle->status = 1;
 	coder->nb_dongle++;
@@ -38,16 +47,17 @@ int take_dongle(t_coder *coder, t_dongle *dongle)
 int release_dongle(t_coder *coder, t_dongle *dongle)
 {
 	// maybe here something like if 2 release both to reduce nb of lines
+	// problem here with the cooldown
 	pthread_mutex_lock(&dongle->lock);
 	dongle->status = 0;
-	usleep(coder->args->time_to_cooldown * 1000);
 	pthread_mutex_unlock(&dongle->lock);
+	usleep(coder->args->time_to_cooldown * 1000);
 	pthread_cond_broadcast(&dongle->condDongle);
 }
 
 int dongle_management(t_coder *coder, t_dongle *l_dongle, t_dongle *r_dongle)
 {
-	while(coder->nb_of_compiles != 0 && coder->sim->ongoing != 1)
+	while(coder->nb_of_compiles != 0)
 	{
 		coder->nb_dongle = 0;
 		// resource hierarchy solution
@@ -67,7 +77,7 @@ int dongle_management(t_coder *coder, t_dongle *l_dongle, t_dongle *r_dongle)
 		}
 		if (coder->nb_dongle == 2)
 		{
-			print_status(coder, "is compiling");
+			print_status(coder, "is COMPILING");
 			usleep(coder->args->time_to_compile * 1000);
 			coder->last_time_compiled = get_time_ms();
 			coder->nb_of_compiles--;
