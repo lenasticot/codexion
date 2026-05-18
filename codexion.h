@@ -6,7 +6,7 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/11 12:17:04 by leodum            #+#    #+#             */
-/*   Updated: 2026/05/18 17:20:43 by leodum           ###   ########.fr       */
+/*   Updated: 2026/05/18 19:13:22 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,16 +32,17 @@ typedef struct args {
 	int time_to_debug;
 	int time_to_refactor;
 
-	int time_to_cooldown;
+
 } t_args;
 
 
 typedef struct dongle {
 	int rank;
-	// status: 0 if free / 1 if taken
+	// status: 0 if free / 1 if taken / 2 is cooling down
 	int status;
 	pthread_mutex_t lock;
 	pthread_cond_t condDongle;
+	int time_to_cooldown;
 } t_dongle;
 
 typedef struct coder {
@@ -69,6 +70,7 @@ typedef struct sim {
 	int ongoing;
 	t_dongle *dongles;
 } t_sim;
+
 
 size_t	ft_strlen(const char *s);
 int ft_strcmp(const char *s1, const char *s2);

@@ -6,7 +6,7 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/11 12:16:55 by leodum            #+#    #+#             */
-/*   Updated: 2026/05/18 17:46:31 by leodum           ###   ########.fr       */
+/*   Updated: 2026/05/18 18:41:39 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ int main(int argc, char **argv)
 	args.time_to_compile = ft_atoi(argv[3]);
 	args.time_to_debug = ft_atoi(argv[4]);
 	args.time_to_refactor = ft_atoi(argv[5]);
-	args.time_to_cooldown = ft_atoi(argv[7]);
+	
 	// initializing coders /dongle
 	while (i < nb_coders)
 	{
@@ -105,6 +105,7 @@ int main(int argc, char **argv)
 		coder[i].args = &args;
 		dongle[i].rank = i;
 		dongle[i].status = 0;
+		dongle[i].time_to_cooldown = ft_atoi(argv[7]);
 		if (pthread_mutex_init(&dongle[i].lock, NULL) != 0)
 			return 1;
 		pthread_cond_init(&dongle[i].condDongle, NULL);

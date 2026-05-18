@@ -6,7 +6,7 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/12 13:38:25 by leodum            #+#    #+#             */
-/*   Updated: 2026/05/18 17:53:31 by leodum           ###   ########.fr       */
+/*   Updated: 2026/05/18 19:08:21 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ int take_dongle(t_coder *coder, t_dongle *dongle)
 	if (!check_simulation_ongoing(coder->sim))
 		return 1;
 	pthread_mutex_lock(&dongle->lock);
-	while(dongle->status == 1)
+	while(dongle->status != 0)
 	{
 		pthread_cond_wait(&dongle->condDongle, &dongle->lock);
 		if (!check_simulation_ongoing(coder->sim))
@@ -36,7 +36,6 @@ int take_dongle(t_coder *coder, t_dongle *dongle)
 			pthread_mutex_unlock(&dongle->lock);
 			return 1;
 		}
-			return 1;
 	}
 	dongle->status = 1;
 	coder->nb_dongle++;
@@ -44,15 +43,24 @@ int take_dongle(t_coder *coder, t_dongle *dongle)
 	print_status(coder, "has taken a dongle");
 }
 
+
+int cooling_down(t_dongle *dongle)
+{
+	usleep(dongle->time_to_cooldown * 1000);
+	pthread_mutex_lock(&dongle->lock);
+	dongle->status = 0;
+	pthread_mutex_unlock(&dongle->lock);
+	pthread_cond_broadcast(&dongle->condDongle);
+}
 int release_dongle(t_coder *coder, t_dongle *dongle)
 {
 	// maybe here something like if 2 release both to reduce nb of lines
 	// problem here with the cooldown
 	pthread_mutex_lock(&dongle->lock);
-	dongle->status = 0;
+	dongle->status = 2;
+	
 	pthread_mutex_unlock(&dongle->lock);
-	usleep(coder->args->time_to_cooldown * 1000);
-	pthread_cond_broadcast(&dongle->condDongle);
+
 }
 
 int dongle_management(t_coder *coder, t_dongle *l_dongle, t_dongle *r_dongle)
