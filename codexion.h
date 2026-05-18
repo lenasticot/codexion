@@ -6,7 +6,7 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/11 12:17:04 by leodum            #+#    #+#             */
-/*   Updated: 2026/05/17 14:47:34 by leodum           ###   ########.fr       */
+/*   Updated: 2026/05/18 14:41:23 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,8 @@ typedef struct coder {
 	int priority_rank;
 	int nb_dongle;
  	int nb_of_compiles;
-	int time_to_burnout; //new TBI
+	int time_to_burnout;
+	long int last_time_compiled; 
 	t_dongle *l_dongle;
 	t_dongle *r_dongle;
 	t_args *args;
@@ -73,6 +74,8 @@ typedef struct sim {
 	t_coder *coder;  
 	t_args *args; 
 	int ongoing;
+	pthread_mutex_t lockBurnout;
+	t_dongle *dongles;
 } t_sim;
 
 size_t	ft_strlen(const char *s);

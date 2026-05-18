@@ -6,7 +6,7 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/11 12:16:55 by leodum            #+#    #+#             */
-/*   Updated: 2026/05/17 14:46:00 by leodum           ###   ########.fr       */
+/*   Updated: 2026/05/18 14:43:28 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,18 +64,32 @@ void* monitor_routine(void *monitor)
 	int i = 0;
 	while(1)
 	{
-		while(i <= sim->nb_coders)
+		usleep(1000);
+		while(i < sim->nb_coders)
 		{
-			if (sim->coder[i].time_to_burnout > elapsed_ms(sim->start_time))
+			if (get_time_ms() - sim->coder[i].last_time_compiled  >= sim->args->time_to_burnout)
 			{
-				printf("Coder X has burnout\n");
+				pthread_mutex_lock(&sim->lockBurnout);
+				printf("%ld Coder %i has burnout\n", elapsed_ms(sim->start_time), sim->coder[i].nb);
 				sim->ongoing = 1;
-				return 0;
+				pthread_mutex_unlock(&sim->lockBurnout);
+				i = 0;
+				while(i < sim->nb_coders)
+				{
+					pthread_cond_broadcast(&sim->dongles[i].condDongle);	
+					i++;
+				}
+				
+				return NULL;
+				// need to add something so they know
+				// probably the broadcast or smth
 			}
-
 			i++;
 		}
+
 		printf("No one has burnout, continuing routine\n");
+		// maybe add here a check to see if everyone is still compiling? 
+		// or need to change the while loop system
 		i = 0;		
 	}
 	return NULL;
@@ -104,7 +118,9 @@ int main(int argc, char **argv)
 	t_dongle dongle[nb_coders];
 	t_sim sim;
 	pthread_t threads[nb_coders];
+	pthread_mutex_t lockBurnout;
 	long i = 0;
+	sim.dongles = dongle;
 	// initializing args
  	args.nb_coders = nb_coders;
 	args.time_to_burnout = ft_atoi(argv[2]); //might need to check the time and the ms thingy here
@@ -119,7 +135,8 @@ int main(int argc, char **argv)
 		coder[i].priority_rank = i;
 		coder[i].nb_dongle = 0;
 		coder[i].nb_of_compiles = ft_atoi(argv[6]);
-		coder[i].time_to_burnout = ft_atoi(argv[2]); 
+		coder[i].time_to_burnout = ft_atoi(argv[2]) * 1000; 
+		coder[i].last_time_compiled = get_time_ms();
 		coder[i].l_dongle = &dongle[i];
 		coder[i].r_dongle = &dongle[(i - 1 + nb_coders) % nb_coders];
 		coder[i].sim = &sim;
@@ -138,12 +155,12 @@ int main(int argc, char **argv)
 	sim.coder = coder;
 	sim.args = &args;
 	sim.ongoing = 0;
+	if (pthread_mutex_init(&sim.lockBurnout, NULL) != 0)
+		return 1;
 	if (pthread_mutex_init(&sim.print_message, NULL) != 0)
 		return 1;
 	//creating the monitor
-	pthread_t monitor;
-	if (pthread_create(&monitor, NULL, &monitor_routine, (void *) &sim) != 0)
-		return 1;
+
 	// sending the coder into each thread
 	while (i < nb_coders)
 	{
@@ -152,7 +169,10 @@ int main(int argc, char **argv)
 		i++;
 	}
 	i = 0;
-	
+		
+	pthread_t monitor;
+	if (pthread_create(&monitor, NULL, &monitor_routine, (void *) &sim) != 0)
+		return 1;
 	// closing the coder part
 	while (i < nb_coders)
 	{
