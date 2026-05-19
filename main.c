@@ -6,7 +6,7 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/11 12:16:55 by leodum            #+#    #+#             */
-/*   Updated: 2026/05/18 18:41:39 by leodum           ###   ########.fr       */
+/*   Updated: 2026/05/19 14:18:10 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,14 @@ int main(int argc, char **argv)
 	}
 	else
 		printf("The program is working and is now going to start\n");
+	
+
+
+	// t_coder	*a_tail;
+	// t_coder	*a_head;
+
+	// a_tail = NULL;
+	// a_head = NULL;
 	
 	// creating coder struct
 	int nb_coders = ft_atoi(argv[1]);

@@ -6,7 +6,7 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/11 12:17:04 by leodum            #+#    #+#             */
-/*   Updated: 2026/05/18 19:13:22 by leodum           ###   ########.fr       */
+/*   Updated: 2026/05/19 13:21:42 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,8 @@ typedef struct coder {
 	t_dongle *r_dongle;
 	t_args *args;
 	t_sim *sim;
+	t_coder *prev;
+	t_coder *next;
 }	t_coder;
 
 typedef struct sim {
@@ -90,5 +92,9 @@ int dongle_management(t_coder *coder, t_dongle *l_dongle, t_dongle *r_dongle);
 void *monitor_routine(void *monitor);
 int check_compilation_nb(t_sim *sim);
 int check_simulation_ongoing(t_sim *sim);
+
+void	build_stack(struct node **a_tail, struct node **a_head, char **argv);
+void	add_node_below(int data, int pos, struct node **head);
+void	init_stack(struct node **tail, struct node **head, int value, int pos);
 
 #endif
