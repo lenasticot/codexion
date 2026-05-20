@@ -6,20 +6,26 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/19 12:34:58 by leodum            #+#    #+#             */
-/*   Updated: 2026/05/19 16:39:20 by leodum           ###   ########.fr       */
+/*   Updated: 2026/05/20 12:47:41 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "codexion.h"
 
 #include <limits.h>
+#include <stdlib.h>
+#include <stdio.h>
+
+void swap(int *x, int *y);
+
 
 struct MinHeap
 {
-    int *harr;
-    int capacity;
-    int heap_size;
+    int *harr; // pointer to array of elements in heap
+    int capacity; // maximum possibile size of min heap
+    int heap_size; // current nb of elements in min heap
 };
+
+void MinHeapify(struct MinHeap *h, int i);
 
 int parent(int i)
 {
@@ -36,7 +42,7 @@ int right(int i)
 	return (2 * i + 2);
 }
 
-int getMin(struct minHeap *h)
+int getMin(struct MinHeap *h)
 {
 	return h->harr[0];
 }
@@ -50,7 +56,7 @@ struct MinHeap *createMinHeap(int capacity)
 	return h;
 }
 // insert a new key "k"
-void insertKey(struct minHeap *h, int k)
+void insertKey(struct MinHeap *h, int k)
 {
 	int i;
 	
@@ -60,14 +66,14 @@ void insertKey(struct minHeap *h, int k)
 		return ;
 	}
 	//insert new key at the end
-	h->heap->size++;
+	h->heap_size++;
 	i = h->heap_size - 1;
 	h->harr[i] = k;
 
 	//fix the min heap porpoerty if it is violated
 	while (i != 0 && h->harr[parent(i) > h->harr[i]])
 	{
-		swap(&h->harr[i], &h->harr[parent(i)];
+		swap(&h->harr[i], &h->harr[parent(i)]);
 		i = parent(i);
 	}
 }

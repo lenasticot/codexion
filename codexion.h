@@ -6,7 +6,7 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/11 12:17:04 by leodum            #+#    #+#             */
-/*   Updated: 2026/05/19 13:21:42 by leodum           ###   ########.fr       */
+/*   Updated: 2026/05/20 19:12:37 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,8 @@
 
 
 typedef struct sim t_sim;
+typedef struct heap t_heap;
+
 
 typedef struct args {
 	int nb_coders; 
@@ -43,6 +45,7 @@ typedef struct dongle {
 	pthread_mutex_t lock;
 	pthread_cond_t condDongle;
 	int time_to_cooldown;
+	t_heap *heap;
 } t_dongle;
 
 typedef struct coder {
@@ -59,9 +62,16 @@ typedef struct coder {
 	t_dongle *r_dongle;
 	t_args *args;
 	t_sim *sim;
-	t_coder *prev;
-	t_coder *next;
 }	t_coder;
+
+
+typedef struct heap {
+	t_coder *coder;
+	// t_dongle *dongle; // do i need that?
+	t_coder *arr;
+	int capacity;
+	int heap_size;
+} t_heap;
 
 typedef struct sim {
 	long int start_time;
@@ -93,8 +103,17 @@ void *monitor_routine(void *monitor);
 int check_compilation_nb(t_sim *sim);
 int check_simulation_ongoing(t_sim *sim);
 
-void	build_stack(struct node **a_tail, struct node **a_head, char **argv);
-void	add_node_below(int data, int pos, struct node **head);
-void	init_stack(struct node **tail, struct node **head, int value, int pos);
+// void	build_stack(struct node **a_tail, struct node **a_head, char **argv);
+// void	add_node_below(int data, int pos, struct node **head);
+// void	init_stack(struct node **tail, struct node **head, int value, int pos);
 
+int parent(int i);
+int left(int i);
+int right(int i);
+t_coder getMin(t_heap *c);
+void swap(int *x, int *y);
+void insertKey(t_heap *c, t_coder coder);
+void removeMin(t_heap *c);
+void MinHeapify(t_heap *c, int i);
+void createHeap(t_heap **c, int capacity);
 #endif

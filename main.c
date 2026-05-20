@@ -6,7 +6,7 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/11 12:16:55 by leodum            #+#    #+#             */
-/*   Updated: 2026/05/19 14:18:10 by leodum           ###   ########.fr       */
+/*   Updated: 2026/05/20 19:13:14 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,14 +73,6 @@ int main(int argc, char **argv)
 	else
 		printf("The program is working and is now going to start\n");
 	
-
-
-	// t_coder	*a_tail;
-	// t_coder	*a_head;
-
-	// a_tail = NULL;
-	// a_head = NULL;
-	
 	// creating coder struct
 	int nb_coders = ft_atoi(argv[1]);
 	t_args args;
@@ -114,6 +106,7 @@ int main(int argc, char **argv)
 		dongle[i].rank = i;
 		dongle[i].status = 0;
 		dongle[i].time_to_cooldown = ft_atoi(argv[7]);
+		createHeap(&dongle[i].heap, 2);
 		if (pthread_mutex_init(&dongle[i].lock, NULL) != 0)
 			return 1;
 		pthread_cond_init(&dongle[i].condDongle, NULL);
@@ -128,7 +121,7 @@ int main(int argc, char **argv)
 	sim.ongoing = 0;
 	if (pthread_mutex_init(&sim.print_message, NULL) != 0)
 		return 1;
-	//creating the monitor
+
 
 	// sending the coder into each thread
 	while (i < nb_coders)
@@ -138,11 +131,14 @@ int main(int argc, char **argv)
 		i++;
 	}
 	i = 0;
-		
+
+	//creating the monitor
 	pthread_t monitor;
 	if (pthread_create(&monitor, NULL, &monitor_routine, (void *) &sim) != 0)
 		return 1;
-	// closing the coder part
+
+		
+	// closing the coder part and monitor
 	while (i < nb_coders)
 	{
 		if (pthread_join(threads[i], NULL) != 0)
