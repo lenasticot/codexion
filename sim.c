@@ -6,7 +6,7 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/18 17:18:07 by leodum            #+#    #+#             */
-/*   Updated: 2026/05/18 17:44:38 by leodum           ###   ########.fr       */
+/*   Updated: 2026/05/21 17:22:08 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,6 @@ void* monitor_routine(void *monitor)
 				}
 				return NULL;
 			}
-
 			i++;
 		}
 		if(check_compilation_nb(sim) == 1)

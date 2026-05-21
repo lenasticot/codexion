@@ -6,7 +6,7 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/11 12:17:04 by leodum            #+#    #+#             */
-/*   Updated: 2026/05/20 19:12:37 by leodum           ###   ########.fr       */
+/*   Updated: 2026/05/21 17:36:35 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,6 @@ typedef struct coder {
 
 
 typedef struct heap {
-	t_coder *coder;
 	// t_dongle *dongle; // do i need that?
 	t_coder *arr;
 	int capacity;
