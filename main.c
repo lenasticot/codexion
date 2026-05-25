@@ -71,12 +71,11 @@ int main(int argc, char **argv)
 		printf("Invalid arguments\n");
 		return (1);
 	}
-	else
-		printf("The program is working and is now going to start\n");
 	
 	// creating coder struct
+
 	int nb_coders = ft_atoi(argv[1]);
-	t_args args;
+	//t_args args;
 	t_coder coder[nb_coders];
 	pthread_mutex_t mutex[nb_coders];
 	t_dongle dongle[nb_coders];
@@ -85,11 +84,12 @@ int main(int argc, char **argv)
 	long i = 0;
 	sim.dongles = dongle;
 	// initializing args
- 	args.nb_coders = nb_coders;
-	args.time_to_burnout = ft_atoi(argv[2]); //might need to check the time and the ms thingy here
-	args.time_to_compile = ft_atoi(argv[3]);
-	args.time_to_debug = ft_atoi(argv[4]);
-	args.time_to_refactor = ft_atoi(argv[5]);
+ 	//args.nb_coders = nb_coders;
+	//args.time_to_burnout = ft_atoi(argv[2]); 
+	//args.time_to_compile = ft_atoi(argv[3]);
+	//args.time_to_debug = ft_atoi(argv[4]);
+	//args.time_to_refactor = ft_atoi(argv[5]);
+	init_args(**argv);
 	
 
 	// initializing heap_entry

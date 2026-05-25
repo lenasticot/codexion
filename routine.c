@@ -43,14 +43,10 @@ int take_dongle(t_coder *coder, t_dongle *dongle)
 			return 0;
 		}
 		else
-		{
 			pthread_cond_wait(&dongle->condDongle, &dongle->lock);
-		}	
 	}
-
 }
  
-
 int cooling_down(t_dongle *dongle)
 {
 	usleep(dongle->time_to_cooldown * 1000);
@@ -66,7 +62,20 @@ int release_dongle(t_coder *coder, t_dongle *dongle)
 	coder->nb_dongle--;
 	pthread_mutex_unlock(&dongle->lock);
 	pthread_cond_broadcast(&dongle->condDongle);
-	
+}
+
+void routine_process(t_coder *coder)
+{
+	print_status(coder, "is COMPILING");
+	usleep(coder->args->time_to_compile * 1000);
+	coder->last_time_compiled = get_time_ms();
+	coder->nb_of_compiles--;
+	release_dongle(coder, coder->l_dongle);
+	release_dongle(coder, coder->r_dongle);
+	print_status(coder, "is debuging");
+	usleep(coder->args->time_to_debug * 1000);
+	print_status(coder, "is refactoring");
+	usleep(coder->args->time_to_refactor * 1000);
 }
 
 int dongle_management(t_coder *coder, t_dongle *l_dongle, t_dongle *r_dongle)
@@ -74,7 +83,6 @@ int dongle_management(t_coder *coder, t_dongle *l_dongle, t_dongle *r_dongle)
 	while(coder->nb_of_compiles != 0)
 	{
 		coder->nb_dongle = 0;
-		// resource hierarchy solution
 		if (l_dongle->rank > r_dongle->rank)
 		{
 			if(take_dongle(coder, l_dongle) == 1)
@@ -90,18 +98,7 @@ int dongle_management(t_coder *coder, t_dongle *l_dongle, t_dongle *r_dongle)
 				return 1;
 		}
 		if (coder->nb_dongle == 2)
-		{
-			print_status(coder, "is COMPILING");
-			usleep(coder->args->time_to_compile * 1000);
-			coder->last_time_compiled = get_time_ms();
-			coder->nb_of_compiles--;
-			release_dongle(coder, l_dongle);
-			release_dongle(coder, r_dongle);
-			print_status(coder, "is debuging");
-			usleep(coder->args->time_to_debug * 1000);
-			print_status(coder, "is refactoring");
-			usleep(coder->args->time_to_refactor * 1000);
-		}
+			routine_process(coder);
 	}		
 	return 0;
 }

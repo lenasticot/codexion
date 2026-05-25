@@ -25,12 +25,20 @@ void createHeap(t_heap **c, int capacity)
 		(*c)->heap_size = 0;
 }
 
+void swap(t_entry *a, t_entry *b)
+{
+	t_entry tmp;
+
+	tmp = *a;
+	*a = *b;
+	*a = tmp;
+}
+
 void insertKey(t_heap *c, t_coder *coder)
 {
 	int i;
 	int parent;
-	t_entry tmp;
-	
+
 	if(c->heap_size >= 2)
 	{
 		printf("\nOverflow: canot insert another key\n");
@@ -49,13 +57,8 @@ void insertKey(t_heap *c, t_coder *coder)
 			return ;
 	}
 	else
-	{
-		tmp = c->arr[parent];
-		c->arr[parent] = c->arr[i];
-		c->arr[i] = tmp;
-		i = parent;
-	}
-	}
+		swap(&c->arr[parent], &c->arr[i]);
+}
 
 void removeMin(t_heap *c)
 {
@@ -67,5 +70,4 @@ void removeMin(t_heap *c)
 	c->arr[0] = c->arr[c->heap_size - 1];
 	c->heap_size--;
 	free(root);
-
 }

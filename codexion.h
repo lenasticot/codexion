@@ -91,16 +91,15 @@ long int get_time_ms();
 int print_status(t_coder *coder, char *message);
 
 int dongle_management(t_coder *coder, t_dongle *l_dongle, t_dongle *r_dongle);
+void routine_process(t_coder *coder);
 
 void *monitor_routine(void *monitor);
 int check_compilation_nb(t_sim *sim);
 int check_simulation_ongoing(t_sim *sim);
 
-int parent(int i);
-int left(int i);
-int right(int i);
+
 t_coder getMin(t_heap *c);
-void swap(int *x, int *y);
+void swap(t_entry *a, t_entry *b);
 void insertKey(t_heap *c, t_coder *coder);
 void removeMin(t_heap *c);
 void MinHeapify(t_heap *c, int i);
