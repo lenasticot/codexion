@@ -6,7 +6,7 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/11 12:16:55 by leodum            #+#    #+#             */
-/*   Updated: 2026/05/20 19:13:14 by leodum           ###   ########.fr       */
+/*   Updated: 2026/05/25 18:10:00 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ int	ft_atoi(const char *nptr)
 	}
 	return (result * sign);
 }
+
 long int get_time_ms()
 {
 	struct timeval t;
@@ -90,11 +91,18 @@ int main(int argc, char **argv)
 	args.time_to_debug = ft_atoi(argv[4]);
 	args.time_to_refactor = ft_atoi(argv[5]);
 	
-	// initializing coders /dongle
+
+	// initializing heap_entry
+	t_entry *h_entry;
+
+	h_entry = (t_entry *)malloc(nb_coders * sizeof(t_entry));
+	if (!h_entry)
+		return 1;
+	// initializing coders /dongle / heap
 	while (i < nb_coders)
 	{
 		coder[i].nb = i;
-		coder[i].priority_rank = i;
+		coder[i].priority_rank = 0;
 		coder[i].nb_dongle = 0;
 		coder[i].nb_of_compiles = ft_atoi(argv[6]);
 		coder[i].time_to_burnout = ft_atoi(argv[2]) * 1000; 

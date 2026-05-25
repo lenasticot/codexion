@@ -6,7 +6,7 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/11 12:17:04 by leodum            #+#    #+#             */
-/*   Updated: 2026/05/21 17:36:35 by leodum           ###   ########.fr       */
+/*   Updated: 2026/05/25 18:54:03 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,11 +21,8 @@
 # include <stdint.h>
 # include <sys/time.h>
 
-
-
 typedef struct sim t_sim;
 typedef struct heap t_heap;
-
 
 typedef struct args {
 	int nb_coders; 
@@ -33,14 +30,10 @@ typedef struct args {
 	int time_to_compile;
 	int time_to_debug;
 	int time_to_refactor;
-
-
 } t_args;
-
 
 typedef struct dongle {
 	int rank;
-	// status: 0 if free / 1 if taken / 2 is cooling down
 	int status;
 	pthread_mutex_t lock;
 	pthread_cond_t condDongle;
@@ -50,9 +43,6 @@ typedef struct dongle {
 
 typedef struct coder {
 	int nb;
-	// maybe need to do a hierachy between them especially to know which one has the priority
-	// ?
-	// might be what i will do in the heap and queue thing so this might not be that needed atm
 	int priority_rank;
 	int nb_dongle;
  	int nb_of_compiles;
@@ -64,12 +54,16 @@ typedef struct coder {
 	t_sim *sim;
 }	t_coder;
 
+typedef struct heap_entry {
+    int nb;
+    int priority_rank;
+} t_entry;
 
 typedef struct heap {
-	// t_dongle *dongle; // do i need that?
-	t_coder *arr;
+	t_entry *arr;
 	int capacity;
 	int heap_size;
+	
 } t_heap;
 
 typedef struct sim {
@@ -102,16 +96,12 @@ void *monitor_routine(void *monitor);
 int check_compilation_nb(t_sim *sim);
 int check_simulation_ongoing(t_sim *sim);
 
-// void	build_stack(struct node **a_tail, struct node **a_head, char **argv);
-// void	add_node_below(int data, int pos, struct node **head);
-// void	init_stack(struct node **tail, struct node **head, int value, int pos);
-
 int parent(int i);
 int left(int i);
 int right(int i);
 t_coder getMin(t_heap *c);
 void swap(int *x, int *y);
-void insertKey(t_heap *c, t_coder coder);
+void insertKey(t_heap *c, t_coder *coder);
 void removeMin(t_heap *c);
 void MinHeapify(t_heap *c, int i);
 void createHeap(t_heap **c, int capacity);
