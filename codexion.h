@@ -6,7 +6,7 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/11 12:17:04 by leodum            #+#    #+#             */
-/*   Updated: 2026/05/25 18:54:03 by leodum           ###   ########.fr       */
+/*   Updated: 2026/05/26 13:07:01 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ typedef struct args {
 	int time_to_compile;
 	int time_to_debug;
 	int time_to_refactor;
+	int nb_of_compiles;
 } t_args;
 
 typedef struct dongle {
@@ -83,6 +84,16 @@ int check_priority_order(char *args);
 int is_valid_number(char *args);
 int only_int_allowed(char **str);
 
+
+//initialization
+void init_management(char **argv);
+int heap_init(t_entry **h_entry, t_args *args);
+int launch_sim(t_args *args, t_coder *coder, t_sim **sim);
+int init_sim(t_sim **sim, t_args *args, t_coder *coder, t_dongle *dongle);
+void init_args(char **argv, int nb_coders, t_args **args);
+int init_dongle(char **argv, int nb_coders, t_dongle **dongle, pthread_mutex_t **mutex);
+void init_coder(t_coder **coder, t_dongle *dongle, t_args *args, t_sim **sim);
+
 void* launching_routine(void *args);
 int ft_atoi(const char *nptr);
 int main(int argc, char **argv);
@@ -96,7 +107,6 @@ void routine_process(t_coder *coder);
 void *monitor_routine(void *monitor);
 int check_compilation_nb(t_sim *sim);
 int check_simulation_ongoing(t_sim *sim);
-
 
 t_coder getMin(t_heap *c);
 void swap(t_entry *a, t_entry *b);
