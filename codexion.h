@@ -20,6 +20,7 @@
 # include <pthread.h>
 # include <stdint.h>
 # include <sys/time.h>
+# include <string.h>
 
 typedef struct sim t_sim;
 typedef struct heap t_heap;
@@ -31,6 +32,7 @@ typedef struct args {
 	int time_to_debug;
 	int time_to_refactor;
 	int nb_of_compiles;
+	char *scheduler;
 } t_args;
 
 typedef struct dongle {
@@ -39,6 +41,7 @@ typedef struct dongle {
 	pthread_mutex_t DongleLock;
 	pthread_cond_t condDongle;
 	int time_to_cooldown;
+	int available_to_use;
 	t_heap *heap;
 } t_dongle;
 
@@ -58,7 +61,8 @@ typedef struct coder {
 
 typedef struct heap_entry {
     int nb;
-    int priority_rank;
+    long int priority_rank;
+	long int deadline;
 } t_entry;
 
 typedef struct heap {
@@ -109,10 +113,12 @@ void* monitor_routine(void *monitor);
 int check_compilation_nb(t_sim *sim);
 int check_simulation_ongoing(t_sim *sim);
 
+// heap management
 t_coder getMin(t_heap *c);
 void swap(t_entry *a, t_entry *b);
 void insertKey(t_heap *c, t_coder *coder);
 void removeMin(t_heap *c);
 void MinHeapify(t_heap *c, int i);
 void createHeap(t_heap **c, int capacity);
+void orderingKey(int i, int parent, t_heap *c, long int coderChild,  long int coderParent);
 #endif

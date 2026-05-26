@@ -35,6 +35,7 @@ void* monitor_routine(void *monitor)
 {
 	t_sim *sim = (t_sim *) monitor;
 	int i = 0;
+	int j = 0;
 	printf("Monitor routine is launched correctly\n");
 	while(1)
 	{
@@ -56,7 +57,12 @@ void* monitor_routine(void *monitor)
 				}
 				return NULL;
 			}
+			if (sim->dongles[j].available_to_use <= get_time_ms())
+			{
+				pthread_cond_broadcast(&sim->dongles[j].condDongle);
+			}
 			i++;
+			j++;
 		}
 		if(check_compilation_nb(sim) == 1)
 		{
@@ -68,9 +74,9 @@ void* monitor_routine(void *monitor)
 				i++;
 			}
 			return NULL;
-		}
-			
-		i = 0;		
+		}	
+		i = 0;	
+		j = 0;	
 	}
 	return NULL;
 }

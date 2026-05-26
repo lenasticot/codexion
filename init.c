@@ -59,6 +59,7 @@ int init_dongle(char **argv, int nb_coders, t_dongle **dongle, pthread_mutex_t *
 		(*dongle)[i].rank = i + 1;
 		(*dongle)[i].status = 0;
 		(*dongle)[i].time_to_cooldown = ft_atoi(argv[7]);
+		(*dongle)[i].available_to_use = 0;
 		printf("Dongle %d has been created\n", (*dongle)[i].rank);
 		createHeap(&(*dongle)[i].heap, 2);
 		if (pthread_mutex_init(&(*dongle)[i].DongleLock, NULL) != 0)
@@ -76,11 +77,12 @@ void init_args(char **argv, int nb_coders, t_args **args)
 		return ;
 	
 	(*args)->nb_coders = nb_coders; // do i need to keep this??
-	(*args)->time_to_burnout = ft_atoi(argv[2]) * 1000; 
+	(*args)->time_to_burnout = ft_atoi(argv[2]); 
 	(*args)->time_to_compile = ft_atoi(argv[3]);
 	(*args)->time_to_debug = ft_atoi(argv[4]);
 	(*args)->time_to_refactor = ft_atoi(argv[5]);
 	(*args)->nb_of_compiles = ft_atoi(argv[6]);
+	(*args)->scheduler = argv[8];
 }
 
 int init_sim(t_sim **sim, t_args *args, t_coder *coder, t_dongle *dongle)

@@ -28,12 +28,19 @@ int take_dongle(t_coder *coder, t_dongle *dongle)
 	coder->priority_rank++;
 	while (1)
 	{
+		//while(dongle->available_to_use >= get_time_ms())
+		//{
+		//	print_status(coder, "is waiting for cooldown time\n");
+		//	pthread_cond_wait(&dongle->condDongle, &dongle->DongleLock);
+		//}
 		if (!check_simulation_ongoing(coder->sim))
 		{
 			pthread_mutex_unlock(&dongle->DongleLock);
 			return 1;
 		}
-		if (dongle->status == 0 && dongle->heap->arr[0].nb == coder->nb || dongle->heap->heap_size == 0)
+		if (dongle->status == 0 
+			&& dongle->heap->arr[0].nb == coder->nb 
+			&& dongle->available_to_use <= get_time_ms())
 		{
 			dongle->status = 1;
 			coder->nb_dongle++;
@@ -43,23 +50,17 @@ int take_dongle(t_coder *coder, t_dongle *dongle)
 			return 0;
 		}
 		else
+		// still a bit unsure about the wait
 			pthread_cond_wait(&dongle->condDongle, &dongle->DongleLock);
 	}
 }
- 
-int cooling_down(t_dongle *dongle)
-{
-	usleep(dongle->time_to_cooldown * 1000);
-	pthread_mutex_lock(&dongle->DongleLock);
-	dongle->status = 0;
-	pthread_mutex_unlock(&dongle->DongleLock);
-	pthread_cond_broadcast(&dongle->condDongle);
-}
+
 int release_dongle(t_coder *coder, t_dongle *dongle)
 {
 	pthread_mutex_lock(&dongle->DongleLock);
 	dongle->status = 0;
 	coder->nb_dongle--;
+	dongle->available_to_use = dongle->time_to_cooldown + get_time_ms();
 	pthread_mutex_unlock(&dongle->DongleLock);
 	pthread_cond_broadcast(&dongle->condDongle);
 }
@@ -71,12 +72,8 @@ void routine_process(t_coder *coder)
 	// do i need to lock last_time_compiled?
 	coder->last_time_compiled = get_time_ms();
 	coder->nb_of_compiles--;
-	printf("coder is releasing a dongle\n");
 	release_dongle(coder, coder->l_dongle);
-	printf("coder has released a dongle\n");
-	printf("coder is releasing another dongle\n");
 	release_dongle(coder, coder->r_dongle);
-	printf("coder has released another dongle\n");
 	print_status(coder, "is debuging");
 	usleep(coder->args->time_to_debug * 1000);
 	print_status(coder, "is refactoring");

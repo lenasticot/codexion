@@ -34,6 +34,19 @@ void swap(t_entry *a, t_entry *b)
 	*a = tmp;
 }
 
+void orderingKey(int i, int parent, t_heap *c, long int coderChild, long int coderParent)
+{
+	if (coderParent < coderChild)
+		return ;
+	else if (coderParent == coderChild)
+	{
+		if (c->arr[parent].nb > c->arr[i].nb)
+			return ;
+	}
+	else
+		swap(&c->arr[parent], &c->arr[i]);
+}
+
 void insertKey(t_heap *c, t_coder *coder)
 {
 	int i;
@@ -48,16 +61,14 @@ void insertKey(t_heap *c, t_coder *coder)
 	i = c->heap_size - 1;
 	c->arr[i].nb = coder->nb;
 	c->arr[i].priority_rank = coder->priority_rank;
+	c->arr[i].deadline = coder->last_time_compiled + coder->args->time_to_burnout;
 	parent = (i - 1) / 2;
-	if (c->arr[parent].priority_rank < c->arr[i].priority_rank)
-		return ;
-	else if (c->arr[parent].priority_rank == c->arr[i].priority_rank)
-	{
-		if (c->arr[parent].nb > c->arr[i].nb)
-			return ;
-	}
-	else
-		swap(&c->arr[parent], &c->arr[i]);
+	if (parent == 0)
+		return;
+	if (!strcmp(coder->args->scheduler, "fifo"))
+		orderingKey(i, parent, c, c->arr[i].priority_rank, c->arr[parent].priority_rank);
+	else if (!strcmp(coder->args->scheduler, "edf"))
+		orderingKey(i, parent, c, c->arr[i].deadline, c->arr[parent].deadline);
 }
 
 void removeMin(t_heap *c)
