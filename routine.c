@@ -6,7 +6,7 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/12 13:38:25 by leodum            #+#    #+#             */
-/*   Updated: 2026/05/25 18:52:45 by leodum           ###   ########.fr       */
+/*   Updated: 2026/05/26 16:53:02 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,14 +23,14 @@ int print_status(t_coder *coder, char *message)
 
 int take_dongle(t_coder *coder, t_dongle *dongle)
 {
-	pthread_mutex_lock(&dongle->lock);
+	pthread_mutex_lock(&dongle->DongleLock);
 	insertKey(dongle->heap, coder);
 	coder->priority_rank++;
 	while (1)
 	{
 		if (!check_simulation_ongoing(coder->sim))
 		{
-			pthread_mutex_unlock(&dongle->lock);
+			pthread_mutex_unlock(&dongle->DongleLock);
 			return 1;
 		}
 		if (dongle->status == 0 && dongle->heap->arr[0].nb == coder->nb || dongle->heap->heap_size == 0)
@@ -38,29 +38,29 @@ int take_dongle(t_coder *coder, t_dongle *dongle)
 			dongle->status = 1;
 			coder->nb_dongle++;
 			removeMin(dongle->heap);
-			pthread_mutex_unlock(&dongle->lock);
+			pthread_mutex_unlock(&dongle->DongleLock);
 			print_status(coder, "has taken a dongle");
 			return 0;
 		}
 		else
-			pthread_cond_wait(&dongle->condDongle, &dongle->lock);
+			pthread_cond_wait(&dongle->condDongle, &dongle->DongleLock);
 	}
 }
  
 int cooling_down(t_dongle *dongle)
 {
 	usleep(dongle->time_to_cooldown * 1000);
-	pthread_mutex_lock(&dongle->lock);
+	pthread_mutex_lock(&dongle->DongleLock);
 	dongle->status = 0;
-	pthread_mutex_unlock(&dongle->lock);
+	pthread_mutex_unlock(&dongle->DongleLock);
 	pthread_cond_broadcast(&dongle->condDongle);
 }
 int release_dongle(t_coder *coder, t_dongle *dongle)
 {
-	pthread_mutex_lock(&dongle->lock);
+	pthread_mutex_lock(&dongle->DongleLock);
 	dongle->status = 0;
 	coder->nb_dongle--;
-	pthread_mutex_unlock(&dongle->lock);
+	pthread_mutex_unlock(&dongle->DongleLock);
 	pthread_cond_broadcast(&dongle->condDongle);
 }
 
@@ -68,10 +68,15 @@ void routine_process(t_coder *coder)
 {
 	print_status(coder, "is COMPILING");
 	usleep(coder->args->time_to_compile * 1000);
+	// do i need to lock last_time_compiled?
 	coder->last_time_compiled = get_time_ms();
 	coder->nb_of_compiles--;
+	printf("coder is releasing a dongle\n");
 	release_dongle(coder, coder->l_dongle);
+	printf("coder has released a dongle\n");
+	printf("coder is releasing another dongle\n");
 	release_dongle(coder, coder->r_dongle);
+	printf("coder has released another dongle\n");
 	print_status(coder, "is debuging");
 	usleep(coder->args->time_to_debug * 1000);
 	print_status(coder, "is refactoring");

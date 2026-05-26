@@ -6,20 +6,23 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/26 11:30:06 by leodum            #+#    #+#             */
-/*   Updated: 2026/05/26 16:25:10 by leodum           ###   ########.fr       */
+/*   Updated: 2026/05/26 17:22:21 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
 
-void init_coder(t_coder **coder, t_dongle *dongle, t_args *args, t_sim *sim)
+int init_coder(t_coder **coder, t_dongle *dongle, t_args *args, t_sim *sim, pthread_mutex_t **CoderLock)
 {
 	int i;
 
 	i = 0;
+	*CoderLock = malloc(args->nb_coders * sizeof(pthread_mutex_t));
+	if (!*CoderLock)
+		return 1;
 	*coder = malloc(args->nb_coders * sizeof(t_coder));
 	if (!*coder)
-		return ;
+		return 1;
 	// still need ot work on the init
 	while (i < args->nb_coders)
 	{
@@ -33,12 +36,15 @@ void init_coder(t_coder **coder, t_dongle *dongle, t_args *args, t_sim *sim)
 		(*coder)[i].r_dongle = &dongle[(i - 1 + args->nb_coders) % args->nb_coders];
 		(*coder)[i].sim = sim; 
 		(*coder)[i].args = args;
+		if (pthread_mutex_init(&(*coder)[i].CoderLock, NULL) != 0)
+			return 1;
 		i++;
 	}
 	sim->coder = *coder;
+	return 0;
 }
 
-int init_dongle(char **argv, int nb_coders, t_dongle **dongle, pthread_mutex_t **mutex)
+int init_dongle(char **argv, int nb_coders, t_dongle **dongle, pthread_mutex_t **DongleLock)
 {
 	int i;
 
@@ -46,8 +52,8 @@ int init_dongle(char **argv, int nb_coders, t_dongle **dongle, pthread_mutex_t *
 	*dongle = malloc(nb_coders * sizeof(t_dongle));
 	if (!*dongle)
 		return 1;
-	*mutex = malloc(nb_coders * sizeof(pthread_mutex_t));
-	if (!*mutex)
+	*DongleLock = malloc(nb_coders * sizeof(pthread_mutex_t));
+	if (!*DongleLock)
 		return 1;
 	while (i < nb_coders)
 	{
@@ -56,11 +62,12 @@ int init_dongle(char **argv, int nb_coders, t_dongle **dongle, pthread_mutex_t *
 		(*dongle)[i].time_to_cooldown = ft_atoi(argv[7]);
 		printf("Dongle %d has been created\n", (*dongle)[i].rank);
 		createHeap(&(*dongle)[i].heap, 2);
-		if (pthread_mutex_init(&(*dongle)[i].lock, NULL) != 0)
+		if (pthread_mutex_init(&(*dongle)[i].DongleLock, NULL) != 0)
 			return 1;
 		pthread_cond_init(&(*dongle)[i].condDongle, NULL);
 		i++;
 	}
+	return 0;
 }
 
 void init_args(char **argv, int nb_coders, t_args **args)
@@ -146,16 +153,17 @@ void init_management(char **argv)
 	t_coder *coder;
 	t_sim *sim;
 	t_entry *h_entry;
-	pthread_mutex_t *mutex;
+	pthread_mutex_t *DongleMutex;
+	pthread_mutex_t *CoderMutex;
 	int i;
 
 	i = 0;
 	nb_coders = ft_atoi(argv[1]);
 	init_args(argv, nb_coders, &args);
 	heap_init(&h_entry, args);
-	init_dongle(argv, nb_coders, &dongle, &mutex);
+	printf("dongle success %i\n", init_dongle(argv, nb_coders, &dongle, &DongleMutex));
 	init_sim(&sim, args, coder, dongle);
-	init_coder(&coder, dongle, args, sim);
+	printf("coder success %i\n", init_coder(&coder, dongle, args, sim, &CoderMutex));
 	launch_sim(args, coder, sim);
 	return ;
 }

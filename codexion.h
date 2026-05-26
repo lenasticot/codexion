@@ -6,7 +6,7 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/11 12:17:04 by leodum            #+#    #+#             */
-/*   Updated: 2026/05/26 16:09:41 by leodum           ###   ########.fr       */
+/*   Updated: 2026/05/26 17:20:22 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ typedef struct args {
 typedef struct dongle {
 	int rank;
 	int status;
-	pthread_mutex_t lock;
+	pthread_mutex_t DongleLock;
 	pthread_cond_t condDongle;
 	int time_to_cooldown;
 	t_heap *heap;
@@ -53,6 +53,7 @@ typedef struct coder {
 	t_dongle *r_dongle;
 	t_args *args;
 	t_sim *sim;
+	pthread_mutex_t CoderLock;
 }	t_coder;
 
 typedef struct heap_entry {
@@ -92,7 +93,7 @@ int launch_sim(t_args *args, t_coder *coder, t_sim *sim);
 int init_sim(t_sim **sim, t_args *args, t_coder *coder, t_dongle *dongle);
 void init_args(char **argv, int nb_coders, t_args **args);
 int init_dongle(char **argv, int nb_coders, t_dongle **dongle, pthread_mutex_t **mutex);
-void init_coder(t_coder **coder, t_dongle *dongle, t_args *args, t_sim *sim);
+int init_coder(t_coder **coder, t_dongle *dongle, t_args *args, t_sim *sim, pthread_mutex_t **CoderLock);
 
 void* launching_routine(void *args);
 int ft_atoi(const char *nptr);

@@ -6,7 +6,7 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/18 17:18:07 by leodum            #+#    #+#             */
-/*   Updated: 2026/05/26 16:25:13 by leodum           ###   ########.fr       */
+/*   Updated: 2026/05/26 16:49:49 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ void* monitor_routine(void *monitor)
 {
 	t_sim *sim = (t_sim *) monitor;
 	int i = 0;
+	printf("Monitor routine is launched correctly\n");
 	while(1)
 	{
 		usleep(1000);
