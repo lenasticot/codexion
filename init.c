@@ -6,7 +6,7 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/26 11:30:06 by leodum            #+#    #+#             */
-/*   Updated: 2026/05/26 17:22:21 by leodum           ###   ########.fr       */
+/*   Updated: 2026/05/26 17:32:03 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@ int init_coder(t_coder **coder, t_dongle *dongle, t_args *args, t_sim *sim, pthr
 	*coder = malloc(args->nb_coders * sizeof(t_coder));
 	if (!*coder)
 		return 1;
-	// still need ot work on the init
 	while (i < args->nb_coders)
 	{
 		(*coder)[i].nb = i + 1;
@@ -115,8 +114,7 @@ int launch_sim(t_args *args, t_coder *coder, t_sim *sim)
 	i = 0;
 	while (i < args->nb_coders)
 	{
-		// a bit weird the launching routine to check whats going on
-		printf("Coder %i is starting their routine\n", coder->nb);
+		// printf("Coder %i is starting their routine\n", coder->nb);
 		if (pthread_create(&threads[i], NULL, &launching_routine, (void *) &coder[i]) != 0)
 			return 1;
 		i++;
@@ -161,9 +159,9 @@ void init_management(char **argv)
 	nb_coders = ft_atoi(argv[1]);
 	init_args(argv, nb_coders, &args);
 	heap_init(&h_entry, args);
-	printf("dongle success %i\n", init_dongle(argv, nb_coders, &dongle, &DongleMutex));
+	init_dongle(argv, nb_coders, &dongle, &DongleMutex);
 	init_sim(&sim, args, coder, dongle);
-	printf("coder success %i\n", init_coder(&coder, dongle, args, sim, &CoderMutex));
+	init_coder(&coder, dongle, args, sim, &CoderMutex);
 	launch_sim(args, coder, sim);
 	return ;
 }
