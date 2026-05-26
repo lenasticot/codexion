@@ -6,7 +6,7 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/11 12:17:04 by leodum            #+#    #+#             */
-/*   Updated: 2026/05/26 13:07:01 by leodum           ###   ########.fr       */
+/*   Updated: 2026/05/26 16:09:41 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,11 +88,11 @@ int only_int_allowed(char **str);
 //initialization
 void init_management(char **argv);
 int heap_init(t_entry **h_entry, t_args *args);
-int launch_sim(t_args *args, t_coder *coder, t_sim **sim);
+int launch_sim(t_args *args, t_coder *coder, t_sim *sim);
 int init_sim(t_sim **sim, t_args *args, t_coder *coder, t_dongle *dongle);
 void init_args(char **argv, int nb_coders, t_args **args);
 int init_dongle(char **argv, int nb_coders, t_dongle **dongle, pthread_mutex_t **mutex);
-void init_coder(t_coder **coder, t_dongle *dongle, t_args *args, t_sim **sim);
+void init_coder(t_coder **coder, t_dongle *dongle, t_args *args, t_sim *sim);
 
 void* launching_routine(void *args);
 int ft_atoi(const char *nptr);
@@ -104,7 +104,7 @@ int print_status(t_coder *coder, char *message);
 int dongle_management(t_coder *coder, t_dongle *l_dongle, t_dongle *r_dongle);
 void routine_process(t_coder *coder);
 
-void *monitor_routine(void *monitor);
+void* monitor_routine(void *monitor);
 int check_compilation_nb(t_sim *sim);
 int check_simulation_ongoing(t_sim *sim);
 

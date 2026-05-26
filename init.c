@@ -6,13 +6,13 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/26 11:30:06 by leodum            #+#    #+#             */
-/*   Updated: 2026/05/26 13:35:34 by leodum           ###   ########.fr       */
+/*   Updated: 2026/05/26 16:25:10 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
 
-void init_coder(t_coder **coder, t_dongle *dongle, t_args *args, t_sim **sim)
+void init_coder(t_coder **coder, t_dongle *dongle, t_args *args, t_sim *sim)
 {
 	int i;
 
@@ -31,11 +31,11 @@ void init_coder(t_coder **coder, t_dongle *dongle, t_args *args, t_sim **sim)
 		(*coder)[i].last_time_compiled = get_time_ms();
 		(*coder)[i].l_dongle = &dongle[i];
 		(*coder)[i].r_dongle = &dongle[(i - 1 + args->nb_coders) % args->nb_coders];
-		(*coder)[i].sim = *sim; 
+		(*coder)[i].sim = sim; 
 		(*coder)[i].args = args;
 		i++;
 	}
-	(*sim)->coder = *coder;
+	sim->coder = *coder;
 }
 
 int init_dongle(char **argv, int nb_coders, t_dongle **dongle, pthread_mutex_t **mutex)
@@ -79,21 +79,24 @@ void init_args(char **argv, int nb_coders, t_args **args)
 
 int init_sim(t_sim **sim, t_args *args, t_coder *coder, t_dongle *dongle)
 {
-	*sim = malloc(sizeof(t_sim));
-	if (!*sim)
+	t_sim *new_sim;
+	
+	new_sim = malloc(sizeof(t_sim));
+	if (!new_sim)
 		return 1;
-	(*sim)->start_time = get_time_ms();
-	(*sim)->nb_coders = args->nb_coders;
-	// coder is added after coder is created
-	(*sim)->coder = coder; // can i initialize to coder if it is not initialize yet, like just send to the adress, i think 
-	(*sim)->args = args;
-	(*sim)->ongoing = 0;
-	(*sim)->dongles = dongle;
-	if (pthread_mutex_init(&(*sim)->print_message, NULL) != 0)
+	new_sim->start_time = get_time_ms();
+	new_sim->nb_coders = args->nb_coders;
+	new_sim->coder = coder; // can i initialize to coder if it is not initialize yet, like just send to the adress, i think 
+	new_sim->args = args;
+	new_sim->ongoing = 0;
+	new_sim->dongles = dongle;
+	if (pthread_mutex_init(&new_sim->print_message, NULL) != 0)
 		return 1;
+	*sim = new_sim;
+	return (0);
 }
 
-int launch_sim(t_args *args, t_coder *coder, t_sim **sim)
+int launch_sim(t_args *args, t_coder *coder, t_sim *sim)
 {
 	int i;
 	pthread_t *threads;
@@ -105,23 +108,26 @@ int launch_sim(t_args *args, t_coder *coder, t_sim **sim)
 	i = 0;
 	while (i < args->nb_coders)
 	{
+		// a bit weird the launching routine to check whats going on
+		printf("Coder %i is starting their routine\n", coder->nb);
 		if (pthread_create(&threads[i], NULL, &launching_routine, (void *) &coder[i]) != 0)
 			return 1;
 		i++;
 	}
-	i = 0;
-	if (pthread_create(&monitor, NULL, &monitor_routine, (void *) &sim) != 0)
+
+	if (pthread_create(&monitor, NULL, &monitor_routine, (void *) sim) != 0)
 		return 1;
+	i = 0;
 	while (i < args->nb_coders)
 	{
 		if (pthread_join(threads[i], NULL) != 0)
 			return 1;
-		printf("Thread %i returned\n", i);
+		printf("Thread %i returned\n", i +1);
 		i++;
 	}
-	// little problem with the program not terminating correctly
 	if (pthread_join(monitor, NULL) != 0)
 		return 1;
+	printf("Monitor thread returned\n");
 	return 0;
 }
 
@@ -149,6 +155,7 @@ void init_management(char **argv)
 	heap_init(&h_entry, args);
 	init_dongle(argv, nb_coders, &dongle, &mutex);
 	init_sim(&sim, args, coder, dongle);
-	init_coder(&coder, dongle, args, &sim);
-	launch_sim(args, coder, &sim);
+	init_coder(&coder, dongle, args, sim);
+	launch_sim(args, coder, sim);
+	return ;
 }

@@ -6,7 +6,7 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/11 12:16:55 by leodum            #+#    #+#             */
-/*   Updated: 2026/05/26 13:08:37 by leodum           ###   ########.fr       */
+/*   Updated: 2026/05/26 14:55:23 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,94 +74,5 @@ int main(int argc, char **argv)
 	printf("The program is correct and is about to start\n");
 
 	init_management(argv);
-	
+	return 0;
 }
-
-
-	// creating coder struct
-
-	// int nb_coders = ft_atoi(argv[1]);
-	//t_args args;
-	// t_coder coder[nb_coders];
-	//  pthread_mutex_t mutex[nb_coders];
-	// t_dongle dongle[nb_coders];
-	// t_sim sim;
-	// pthread_t threads[nb_coders];
-	// long i = 0;
-	// sim.dongles = dongle;
-	// initializing args
- 	//args.nb_coders = nb_coders;
-	//args.time_to_burnout = ft_atoi(argv[2]); 
-	//args.time_to_compile = ft_atoi(argv[3]);
-	//args.time_to_debug = ft_atoi(argv[4]);
-	//args.time_to_refactor = ft_atoi(argv[5]);
-
-	
-
-	// initializing heap_entry
-	// t_entry *h_entry;
-	// int i;
-
-	// h_entry = (t_entry *)malloc(nb_coders * sizeof(t_entry));
-	// if (!h_entry)
-	// 	return 1;
-	// initializing coders /dongle / heap
-	// while (i < nb_coders)
-	// {
-	// 	coder[i].nb = i;
-	// 	coder[i].priority_rank = 0;
-	// 	coder[i].nb_dongle = 0;
-	// 	coder[i].nb_of_compiles = ft_atoi(argv[6]);
-	// 	coder[i].time_to_burnout = ft_atoi(argv[2]) * 1000; 
-	// 	coder[i].last_time_compiled = get_time_ms();
-	// 	coder[i].l_dongle = &dongle[i];
-	// 	coder[i].r_dongle = &dongle[(i - 1 + nb_coders) % nb_coders];
-	// 	coder[i].sim = &sim;
-	// 	coder[i].args = &args;
-	// 	dongle[i].rank = i;
-	// 	dongle[i].status = 0;
-	// 	dongle[i].time_to_cooldown = ft_atoi(argv[7]);
-	// 	createHeap(&dongle[i].heap, 2);
-	// 	if (pthread_mutex_init(&dongle[i].lock, NULL) != 0)
-	// 		return 1;
-	// 	pthread_cond_init(&dongle[i].condDongle, NULL);
-	// 	i++;
-	// }
-	// i = 0;
-	// initializing sim thread
-	// sim.start_time = get_time_ms();
-	// sim.nb_coders = nb_coders;
-	// sim.coder = coder;
-	// sim.args = &args;
-	// sim.ongoing = 0;
-	// if (pthread_mutex_init(&sim.print_message, NULL) != 0)
-	// 	return 1;
-
-
-	// sending the coder into each thread
-	// while (i < nb_coders)
-	// {
-	// 	if (pthread_create(&threads[i], NULL, &launching_routine, (void *) &coder[i]) != 0)
-	// 		return 1;
-	// 	i++;
-	// }
-
-
-	// //creating the monitor
-	// pthread_t monitor;
-	// if (pthread_create(&monitor, NULL, &monitor_routine, (void *) &sim) != 0)
-	// 	return 1;
-
-		
-	// closing the coder part and monitor
-	// int i = 0;
-	// while (i < args->nb_coders)
-	// {
-	// 	if (pthread_join(threads[i], NULL) != 0)
-	// 		return 1;
-	// 	printf("Thread %ld returned\n", i);
-	// 	i++;
-	// }
-	// if (pthread_join(monitor, NULL) != 0)
-	// 	return 1;
-	// return 0;

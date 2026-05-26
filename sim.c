@@ -6,7 +6,7 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/18 17:18:07 by leodum            #+#    #+#             */
-/*   Updated: 2026/05/21 17:22:08 by leodum           ###   ########.fr       */
+/*   Updated: 2026/05/26 16:25:13 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ int check_simulation_ongoing(t_sim *sim)
 int check_compilation_nb(t_sim *sim)
 {
 	int i = 0;
-	while(i != sim->args->nb_coders)
+	while(i < sim->args->nb_coders)
 	{
 		if (sim->coder[i].nb_of_compiles != 0)
 			return 0;
@@ -38,6 +38,7 @@ void* monitor_routine(void *monitor)
 	while(1)
 	{
 		usleep(1000);
+		
 		while(i < sim->nb_coders)
 		{
 			if (get_time_ms() - sim->coder[i].last_time_compiled  >= sim->args->time_to_burnout)
