@@ -6,7 +6,7 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/12 13:38:25 by leodum            #+#    #+#             */
-/*   Updated: 2026/05/26 16:53:02 by leodum           ###   ########.fr       */
+/*   Updated: 2026/05/27 16:19:01 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ int print_status(t_coder *coder, char *message)
     pthread_mutex_lock(&coder->sim->print_message);
     printf("%ld %i %s\n", elapsed_ms(coder->sim->start_time), coder->nb, message);
 	pthread_mutex_unlock(&coder->sim->print_message);
+	return 0;
 }
 
 int take_dongle(t_coder *coder, t_dongle *dongle)
@@ -28,11 +29,6 @@ int take_dongle(t_coder *coder, t_dongle *dongle)
 	coder->priority_rank++;
 	while (1)
 	{
-		//while(dongle->available_to_use >= get_time_ms())
-		//{
-		//	print_status(coder, "is waiting for cooldown time\n");
-		//	pthread_cond_wait(&dongle->condDongle, &dongle->DongleLock);
-		//}
 		if (!check_simulation_ongoing(coder->sim))
 		{
 			pthread_mutex_unlock(&dongle->DongleLock);
@@ -53,9 +49,10 @@ int take_dongle(t_coder *coder, t_dongle *dongle)
 		// still a bit unsure about the wait
 			pthread_cond_wait(&dongle->condDongle, &dongle->DongleLock);
 	}
+	return 1;
 }
 
-int release_dongle(t_coder *coder, t_dongle *dongle)
+void release_dongle(t_coder *coder, t_dongle *dongle)
 {
 	pthread_mutex_lock(&dongle->DongleLock);
 	dongle->status = 0;
@@ -67,10 +64,12 @@ int release_dongle(t_coder *coder, t_dongle *dongle)
 
 void routine_process(t_coder *coder)
 {
+	coder->last_time_compiled = get_time_ms();
 	print_status(coder, "is COMPILING");
 	usleep(coder->args->time_to_compile * 1000);
 	// do i need to lock last_time_compiled?
-	coder->last_time_compiled = get_time_ms();
+	// i need to lock it everytime there is a chance i can use it somewhere else
+
 	coder->nb_of_compiles--;
 	release_dongle(coder, coder->l_dongle);
 	release_dongle(coder, coder->r_dongle);

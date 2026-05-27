@@ -6,7 +6,7 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/18 17:18:07 by leodum            #+#    #+#             */
-/*   Updated: 2026/05/26 16:49:49 by leodum           ###   ########.fr       */
+/*   Updated: 2026/05/27 16:19:22 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,16 +36,17 @@ void* monitor_routine(void *monitor)
 	t_sim *sim = (t_sim *) monitor;
 	int i = 0;
 	int j = 0;
-	printf("Monitor routine is launched correctly\n");
+	print_status(&sim->coder[i], "Monitor time");
 	while(1)
 	{
 		usleep(1000);
 		
 		while(i < sim->nb_coders)
 		{
-			if (get_time_ms() - sim->coder[i].last_time_compiled  >= sim->args->time_to_burnout)
+			// printf("Coder %d time before burnout is %ld while the burnout time is %d\n", sim->coder[i].nb, get_time_ms() - sim->coder[i].last_time_compiled, sim->args->time_to_burnout);
+			if (get_time_ms() - sim->coder[i].last_time_compiled  > sim->args->time_to_burnout)
 			{
-				print_status(&sim->coder[i], "has burnout");
+				 print_status(&sim->coder[i], "has burnout");
 				// do i need the mutex then if i print outside?
 				// to think about it
 				sim->ongoing = 1;

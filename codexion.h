@@ -6,7 +6,7 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/11 12:17:04 by leodum            #+#    #+#             */
-/*   Updated: 2026/05/26 17:20:22 by leodum           ###   ########.fr       */
+/*   Updated: 2026/05/27 17:05:36 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,10 @@ int is_valid_number(char *args);
 int only_int_allowed(char **str);
 
 
+//free and clean
+int join_threads(pthread_t thread);
+int join_monitor(pthread_t monitor);
+
 //initialization
 void init_management(char **argv);
 int heap_init(t_entry **h_entry, t_args *args);
@@ -99,6 +103,7 @@ void init_args(char **argv, int nb_coders, t_args **args);
 int init_dongle(char **argv, int nb_coders, t_dongle **dongle, pthread_mutex_t **mutex);
 int init_coder(t_coder **coder, t_dongle *dongle, t_args *args, t_sim *sim, pthread_mutex_t **CoderLock);
 
+// main
 void* launching_routine(void *args);
 int ft_atoi(const char *nptr);
 int main(int argc, char **argv);
@@ -106,8 +111,11 @@ long int elapsed_ms(long int start_ms);
 long int get_time_ms();
 int print_status(t_coder *coder, char *message);
 
+// routine
 int dongle_management(t_coder *coder, t_dongle *l_dongle, t_dongle *r_dongle);
 void routine_process(t_coder *coder);
+void release_dongle(t_coder *coder, t_dongle *dongle);
+int take_dongle(t_coder *coder, t_dongle *dongle);
 
 void* monitor_routine(void *monitor);
 int check_compilation_nb(t_sim *sim);
@@ -121,4 +129,6 @@ void removeMin(t_heap *c);
 void MinHeapify(t_heap *c, int i);
 void createHeap(t_heap **c, int capacity);
 void orderingKey(int i, int parent, t_heap *c, long int coderChild,  long int coderParent);
+
+
 #endif

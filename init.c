@@ -6,7 +6,7 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/26 11:30:06 by leodum            #+#    #+#             */
-/*   Updated: 2026/05/26 17:32:03 by leodum           ###   ########.fr       */
+/*   Updated: 2026/05/27 17:13:38 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,6 @@ int init_dongle(char **argv, int nb_coders, t_dongle **dongle, pthread_mutex_t *
 		(*dongle)[i].status = 0;
 		(*dongle)[i].time_to_cooldown = ft_atoi(argv[7]);
 		(*dongle)[i].available_to_use = 0;
-		printf("Dongle %d has been created\n", (*dongle)[i].rank);
 		createHeap(&(*dongle)[i].heap, 2);
 		if (pthread_mutex_init(&(*dongle)[i].DongleLock, NULL) != 0)
 			return 1;
@@ -121,20 +120,15 @@ int launch_sim(t_args *args, t_coder *coder, t_sim *sim)
 			return 1;
 		i++;
 	}
-
 	if (pthread_create(&monitor, NULL, &monitor_routine, (void *) sim) != 0)
 		return 1;
 	i = 0;
 	while (i < args->nb_coders)
 	{
-		if (pthread_join(threads[i], NULL) != 0)
-			return 1;
-		printf("Thread %i returned\n", i +1);
+		join_threads(threads[i]);
 		i++;
 	}
-	if (pthread_join(monitor, NULL) != 0)
-		return 1;
-	printf("Monitor thread returned\n");
+	join_monitor(monitor);
 	return 0;
 }
 
@@ -143,6 +137,7 @@ int heap_init(t_entry **h_entry, t_args *args)
 	*h_entry = (t_entry *)malloc(args->nb_coders * sizeof(t_entry));
 	if (!h_entry)
 		return 1;
+	return 0;
 }
 
 void init_management(char **argv)
@@ -157,6 +152,8 @@ void init_management(char **argv)
 	pthread_mutex_t *CoderMutex;
 	int i;
 
+	coder = NULL;
+	
 	i = 0;
 	nb_coders = ft_atoi(argv[1]);
 	init_args(argv, nb_coders, &args);
