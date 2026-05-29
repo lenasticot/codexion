@@ -93,6 +93,11 @@ int only_int_allowed(char **str);
 //free and clean
 int join_threads(pthread_t thread);
 int join_monitor(pthread_t monitor);
+void free_threads(pthread_t *threads, int i);
+int free_coders(t_coder *coder);
+int free_sim(t_sim *sim);
+void free_dongles_and_heap(t_sim *sim);
+int free_them_all(t_sim *sim, t_coder *coder);
 
 //initialization
 void init_management(char **argv);
@@ -100,9 +105,8 @@ int heap_init(t_entry **h_entry, t_args *args);
 int launch_sim(t_args *args, t_coder *coder, t_sim *sim);
 int init_sim(t_sim **sim, t_args *args, t_coder *coder, t_dongle *dongle);
 void init_args(char **argv, int nb_coders, t_args **args);
-int init_dongle(char **argv, int nb_coders, t_dongle **dongle, pthread_mutex_t **mutex);
-int init_coder(t_coder **coder, t_dongle *dongle, t_args *args, t_sim *sim, pthread_mutex_t **CoderLock);
-
+int init_dongle(char **argv, int nb_coders, t_dongle **dongle, pthread_t DongleLock);
+int init_coder(t_coder **coder, t_dongle *dongle, t_args *args, t_sim *sim);
 // main
 void* launching_routine(void *args);
 int ft_atoi(const char *nptr);

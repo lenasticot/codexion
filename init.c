@@ -12,14 +12,11 @@
 
 #include "codexion.h"
 
-int init_coder(t_coder **coder, t_dongle *dongle, t_args *args, t_sim *sim, pthread_mutex_t **CoderLock)
+int init_coder(t_coder **coder, t_dongle *dongle, t_args *args, t_sim *sim)
 {
 	int i;
 
 	i = 0;
-	*CoderLock = malloc(args->nb_coders * sizeof(pthread_mutex_t));
-	if (!*CoderLock)
-		return 1;
 	*coder = malloc(args->nb_coders * sizeof(t_coder));
 	if (!*coder)
 		return 1;
@@ -43,17 +40,12 @@ int init_coder(t_coder **coder, t_dongle *dongle, t_args *args, t_sim *sim, pthr
 	return 0;
 }
 
-int init_dongle(char **argv, int nb_coders, t_dongle **dongle, pthread_mutex_t **DongleLock)
+int init_dongle(char **argv, int nb_coders, t_dongle **dongle, pthread_t DongleLock)
 {
 	int i;
 
+
 	i = 0;
-	*dongle = malloc(nb_coders * sizeof(t_dongle));
-	if (!*dongle)
-		return 1;
-	*DongleLock = malloc(nb_coders * sizeof(pthread_mutex_t));
-	if (!*DongleLock)
-		return 1;
 	while (i < nb_coders)
 	{
 		(*dongle)[i].rank = i + 1;
@@ -117,7 +109,11 @@ int launch_sim(t_args *args, t_coder *coder, t_sim *sim)
 	{
 		// printf("Coder %i is starting their routine\n", coder->nb);
 		if (pthread_create(&threads[i], NULL, &launching_routine, (void *) &coder[i]) != 0)
+		{
+			free(threads);
 			return 1;
+		}
+			
 		i++;
 	}
 	if (pthread_create(&monitor, NULL, &monitor_routine, (void *) sim) != 0)
@@ -128,17 +124,20 @@ int launch_sim(t_args *args, t_coder *coder, t_sim *sim)
 		join_threads(threads[i]);
 		i++;
 	}
+
+	free(threads);
 	join_monitor(monitor);
+	free_them_all(sim, coder);
 	return 0;
 }
 
-int heap_init(t_entry **h_entry, t_args *args)
-{
-	*h_entry = (t_entry *)malloc(args->nb_coders * sizeof(t_entry));
-	if (!h_entry)
-		return 1;
-	return 0;
-}
+//int heap_init(t_entry **h_entry, t_args *args)
+//{
+//	*h_entry = (t_entry *)malloc(args->nb_coders * sizeof(t_entry));
+//	if (!h_entry)
+//		return 1;
+//	return 0;
+//}
 
 void init_management(char **argv)
 {
@@ -147,20 +146,26 @@ void init_management(char **argv)
 	t_args *args;
 	t_coder *coder;
 	t_sim *sim;
-	t_entry *h_entry;
-	pthread_mutex_t *DongleMutex;
-	pthread_mutex_t *CoderMutex;
-	int i;
+	//t_entry *h_entry;
+	pthread_t *DongleLock = NULL;
+	//pthread_t CoderLock;
 
 	coder = NULL;
 	
-	i = 0;
 	nb_coders = ft_atoi(argv[1]);
+	printf("Args initialization\n");
 	init_args(argv, nb_coders, &args);
-	heap_init(&h_entry, args);
-	init_dongle(argv, nb_coders, &dongle, &DongleMutex);
+	printf("Args initialized\n");
+	//heap_init(&h_entry, args);
+	printf("Dongle initialization\n");
+	init_dongle(argv, nb_coders, &dongle, &DongleLock);
+	printf("Dongle initializated\n");
+	printf("Sim initialization\n");
 	init_sim(&sim, args, coder, dongle);
-	init_coder(&coder, dongle, args, sim, &CoderMutex);
+	printf("Sim initializated\n");
+	printf("Coders initialization\n");
+	init_coder(&coder, dongle, args, sim);
+	printf("Coders initializated\n");
 	launch_sim(args, coder, sim);
 	return ;
 }

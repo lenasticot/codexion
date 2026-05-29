@@ -41,8 +41,6 @@ int ft_strcmp(const char *s1, const char *s2)
 
 int check_priority_order(char *args)
 {
-	int i;
-	i = 0;
 	if (ft_strlen(args) != 3 && ft_strlen(args) != 4)
 		return (0);
 	if (ft_strlen(args) == 3)

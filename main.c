@@ -74,5 +74,7 @@ int main(int argc, char **argv)
 	printf("The program is correct and is about to start\n");
 
 	init_management(argv);
+
+
 	return 0;
 }

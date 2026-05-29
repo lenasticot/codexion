@@ -28,26 +28,28 @@ int join_monitor(pthread_t monitor)
 	return 0;
 }
 
-int free_coders(t_coder **coder)
+
+
+int free_coders(t_coder *coder)
 {
 	int i;
 	
 	i = 0;
-	while(i < (*coder)->sim->nb_coders)
+	while(i < coder->sim->nb_coders)
 	{
-		pthread_mutex_destroy(&(*coder)[i].CoderLock);
+		pthread_mutex_destroy(&coder[i].CoderLock);
 		i++;
 	}
-	free(*coder);
+	free(coder);
 	return 0;	
 }
+
 int free_sim(t_sim *sim)
 {
 	pthread_mutex_destroy(&sim->print_message);
 	free(sim->coder);
 	free(sim->args);
 	free(sim->dongles);
-	free(sim);
 	return 0;
 }
 
@@ -70,11 +72,17 @@ void free_dongles_and_heap(t_sim *sim)
 		pthread_cond_destroy(&sim->dongles[i].condDongle);
 		i++;
 	}
-
 }
 
 
-int free_them_all()
+int free_them_all(t_sim *sim, t_coder *coder)
 {
+	free_dongles_and_heap(sim);
+	free_coders(coder);
+	free_sim(sim);
+	free(sim);
+	//pthread_mutex_destroy(&sim->print_message);
+	//free(sim->args);
+	//free(sim);
 	return 0;
 }
