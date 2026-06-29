@@ -14,70 +14,88 @@
 
 int check_simulation_ongoing(t_sim *sim)
 {
-	if (sim->ongoing == 1)
-		return 0;
-	return 1;
+	int ret;
+
+	pthread_mutex_lock(&sim->print_message);
+	ret = (sim->ongoing != 1);
+	pthread_mutex_unlock(&sim->print_message);
+	return ret;
 }
 
 int check_compilation_nb(t_sim *sim)
 {
-	int i = 0;
+	int i;
+	int compiles;
+
+	i = 0;
 	while(i < sim->args->nb_coders)
 	{
-		if (sim->coder[i].nb_of_compiles != 0)
+		pthread_mutex_lock(&sim->coder[i].CoderLock);
+		compiles = sim->coder[i].nb_of_compiles;
+		pthread_mutex_unlock(&sim->coder[i].CoderLock);
+		if (compiles != 0)
 			return 0;
-		i++;	
+		i++;
 	}
 	return 1;
+}
+
+static void stop_simulation(t_sim *sim)
+{
+	int i;
+
+	pthread_mutex_lock(&sim->print_message);
+	sim->ongoing = 1;
+	pthread_mutex_unlock(&sim->print_message);
+	i = 0;
+	while (i < sim->nb_coders)
+	{
+		pthread_mutex_lock(&sim->dongles[i].DongleLock);
+		pthread_cond_broadcast(&sim->dongles[i].condDongle);
+		pthread_mutex_unlock(&sim->dongles[i].DongleLock);
+		i++;
+	}
 }
 
 void* monitor_routine(void *monitor)
 {
 	t_sim *sim = (t_sim *) monitor;
-	int i = 0;
-	int j = 0;
-	print_status(&sim->coder[i], "Monitor time");
+	int i;
+	long int last;
+	long int avail;
+
+	print_status(&sim->coder[0], "Monitor time");
 	while(1)
 	{
 		usleep(1000);
-		
+		i = 0;
 		while(i < sim->nb_coders)
 		{
-			// printf("Coder %d time before burnout is %ld while the burnout time is %d\n", sim->coder[i].nb, get_time_ms() - sim->coder[i].last_time_compiled, sim->args->time_to_burnout);
-			if (get_time_ms() - sim->coder[i].last_time_compiled  > sim->args->time_to_burnout)
+			pthread_mutex_lock(&sim->coder[i].CoderLock);
+			last = sim->coder[i].last_time_compiled;
+			pthread_mutex_unlock(&sim->coder[i].CoderLock);
+			if (get_time_ms() - last > sim->args->time_to_burnout)
 			{
-				 print_status(&sim->coder[i], "has burnout");
-				// do i need the mutex then if i print outside?
-				// to think about it
-				sim->ongoing = 1;
-				i = 0;
-				while(i < sim->nb_coders)
-				{
-					pthread_cond_broadcast(&sim->dongles[i].condDongle);	
-					i++;
-				}
+				print_status(&sim->coder[i], "has burnout");
+				stop_simulation(sim);
 				return NULL;
 			}
-			if (sim->dongles[j].available_to_use <= get_time_ms())
+			pthread_mutex_lock(&sim->dongles[i].DongleLock);
+			avail = sim->dongles[i].available_to_use;
+			pthread_mutex_unlock(&sim->dongles[i].DongleLock);
+			if (avail <= get_time_ms())
 			{
-				pthread_cond_broadcast(&sim->dongles[j].condDongle);
+				pthread_mutex_lock(&sim->dongles[i].DongleLock);
+				pthread_cond_broadcast(&sim->dongles[i].condDongle);
+				pthread_mutex_unlock(&sim->dongles[i].DongleLock);
 			}
 			i++;
-			j++;
 		}
-		if(check_compilation_nb(sim) == 1)
+		if (check_compilation_nb(sim) == 1)
 		{
-			sim->ongoing = 1;
-			i = 0;
-			while(i < sim->nb_coders)
-			{
-				pthread_cond_broadcast(&sim->dongles[i].condDongle);	
-				i++;
-			}
+			stop_simulation(sim);
 			return NULL;
-		}	
-		i = 0;	
-		j = 0;	
+		}
 	}
 	return NULL;
 }

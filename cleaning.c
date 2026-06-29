@@ -47,7 +47,6 @@ int free_coders(t_coder *coder)
 int free_sim(t_sim *sim)
 {
 	pthread_mutex_destroy(&sim->print_message);
-	free(sim->coder);
 	free(sim->args);
 	free(sim->dongles);
 	return 0;

@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(wsl bash *)",
+      "Bash(cd \"\\\\\\\\wsl.localhost\\\\ubuntu\\\\home\\\\lenao\\\\PROGRAMMING\\\\00.PERSO\\\\PERSO\\\\app\\\\00_BookRecApp\")",
+      "Bash(npx create-next-app@latest . --typescript --tailwind --eslint --app --no-src-dir --import-alias \"@/*\" --yes)",
+      "PowerShell(node --version)",
+      "PowerShell(npm --version)",
+      "Read(///wsl.localhost/ubuntu/home/lenao/**)",
+      "Bash(ls /home/ && ls /home/lenao/ 2>/dev/null || echo \"no lenao home\")",
+      "Bash(wsl -e bash -c \"cd /tmp && npx create-next-app@latest bookrec --typescript --tailwind --eslint --app --no-src-dir --import-alias '@/*' --yes 2>&1\")",
+      "Bash(wsl -e bash -c \"cd /home/lenao/PROGRAMMING/00.PERSO/PERSO/app/00_BookRecApp && npm run dev > /tmp/nextdev.log 2>&1 &\")",
+      "Bash(wsl -e bash -c \"cat /tmp/nextdev.log\")"
+    ]
+  }
+}

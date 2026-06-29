@@ -40,11 +40,13 @@ int init_coder(t_coder **coder, t_dongle *dongle, t_args *args, t_sim *sim)
 	return 0;
 }
 
-int init_dongle(char **argv, int nb_coders, t_dongle **dongle, pthread_t DongleLock)
+int init_dongle(char **argv, int nb_coders, t_dongle **dongle)
 {
 	int i;
 
-
+	*dongle = malloc(nb_coders * sizeof(t_dongle));
+	if (!*dongle)
+		return 1;
 	i = 0;
 	while (i < nb_coders)
 	{
@@ -147,18 +149,15 @@ void init_management(char **argv)
 	t_coder *coder;
 	t_sim *sim;
 	//t_entry *h_entry;
-	pthread_t *DongleLock = NULL;
-	//pthread_t CoderLock;
-
 	coder = NULL;
-	
+
 	nb_coders = ft_atoi(argv[1]);
 	printf("Args initialization\n");
 	init_args(argv, nb_coders, &args);
 	printf("Args initialized\n");
 	//heap_init(&h_entry, args);
 	printf("Dongle initialization\n");
-	init_dongle(argv, nb_coders, &dongle, &DongleLock);
+	init_dongle(argv, nb_coders, &dongle);
 	printf("Dongle initializated\n");
 	printf("Sim initialization\n");
 	init_sim(&sim, args, coder, dongle);

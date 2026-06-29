@@ -31,7 +31,7 @@ void swap(t_entry *a, t_entry *b)
 
 	tmp = *a;
 	*a = *b;
-	*a = tmp;
+	*b = tmp;
 }
 
 void orderingKey(int i, int parent, t_heap *c, long int coderChild, long int coderParent)

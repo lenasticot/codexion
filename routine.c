@@ -14,10 +14,13 @@
 
 int print_status(t_coder *coder, char *message)
 {
-	if (!check_simulation_ongoing(coder->sim))
+	pthread_mutex_lock(&coder->sim->print_message);
+	if (coder->sim->ongoing == 1)
+	{
+		pthread_mutex_unlock(&coder->sim->print_message);
 		return 1;
-    pthread_mutex_lock(&coder->sim->print_message);
-    printf("%ld %i %s\n", elapsed_ms(coder->sim->start_time), coder->nb, message);
+	}
+	printf("%ld %i %s\n", elapsed_ms(coder->sim->start_time), coder->nb, message);
 	pthread_mutex_unlock(&coder->sim->print_message);
 	return 0;
 }
@@ -58,19 +61,20 @@ void release_dongle(t_coder *coder, t_dongle *dongle)
 	dongle->status = 0;
 	coder->nb_dongle--;
 	dongle->available_to_use = dongle->time_to_cooldown + get_time_ms();
-	pthread_mutex_unlock(&dongle->DongleLock);
 	pthread_cond_broadcast(&dongle->condDongle);
+	pthread_mutex_unlock(&dongle->DongleLock);
 }
 
 void routine_process(t_coder *coder)
 {
+	pthread_mutex_lock(&coder->CoderLock);
 	coder->last_time_compiled = get_time_ms();
+	pthread_mutex_unlock(&coder->CoderLock);
 	print_status(coder, "is COMPILING");
 	usleep(coder->args->time_to_compile * 1000);
-	// do i need to lock last_time_compiled?
-	// i need to lock it everytime there is a chance i can use it somewhere else
-
+	pthread_mutex_lock(&coder->CoderLock);
 	coder->nb_of_compiles--;
+	pthread_mutex_unlock(&coder->CoderLock);
 	release_dongle(coder, coder->l_dongle);
 	release_dongle(coder, coder->r_dongle);
 	print_status(coder, "is debuging");
