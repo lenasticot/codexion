@@ -6,7 +6,7 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/27 16:47:47 by leodum            #+#    #+#             */
-/*   Updated: 2026/05/27 18:27:53 by leodum           ###   ########.fr       */
+/*   Updated: 2026/06/29 14:55:04 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,6 @@ int join_monitor(pthread_t monitor)
 	printf("Monitor thread returned succesfully\n");
 	return 0;
 }
-
-
 
 int free_coders(t_coder *coder)
 {
@@ -72,7 +70,6 @@ void free_dongles_and_heap(t_sim *sim)
 		i++;
 	}
 }
-
 
 int free_them_all(t_sim *sim, t_coder *coder)
 {

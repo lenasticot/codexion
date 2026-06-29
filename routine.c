@@ -6,7 +6,7 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/12 13:38:25 by leodum            #+#    #+#             */
-/*   Updated: 2026/05/27 16:19:01 by leodum           ###   ########.fr       */
+/*   Updated: 2026/06/29 14:55:26 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ void routine_process(t_coder *coder)
 	pthread_mutex_lock(&coder->CoderLock);
 	coder->last_time_compiled = get_time_ms();
 	pthread_mutex_unlock(&coder->CoderLock);
-	print_status(coder, "is COMPILING");
+	print_status(coder, "is compiling");
 	usleep(coder->args->time_to_compile * 1000);
 	pthread_mutex_lock(&coder->CoderLock);
 	coder->nb_of_compiles--;

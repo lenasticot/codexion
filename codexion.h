@@ -6,7 +6,7 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/11 12:17:04 by leodum            #+#    #+#             */
-/*   Updated: 2026/05/27 17:05:36 by leodum           ###   ########.fr       */
+/*   Updated: 2026/06/29 17:30:15 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,6 @@ typedef struct coder {
 	int priority_rank;
 	int nb_dongle;
  	int nb_of_compiles;
-	int time_to_burnout;
 	long int last_time_compiled; 
 	t_dongle *l_dongle;
 	t_dongle *r_dongle;
@@ -82,12 +81,19 @@ typedef struct sim {
 	t_dongle *dongles;
 } t_sim;
 
-
+// parsing
 size_t	ft_strlen(const char *s);
 int ft_strcmp(const char *s1, const char *s2);
 int check_priority_order(char *args);
 int is_valid_number(char *args);
 int only_int_allowed(char **str);
+
+// utils
+int ft_atoi(const char *nptr);
+long int get_time_ms();
+long int elapsed_ms(long int start_ms);
+//why is this one here?
+void* launching_routine(void *args);
 
 
 //free and clean
@@ -101,12 +107,12 @@ int free_them_all(t_sim *sim, t_coder *coder);
 
 //initialization
 void init_management(char **argv);
-int heap_init(t_entry **h_entry, t_args *args);
-int launch_sim(t_args *args, t_coder *coder, t_sim *sim);
 int init_sim(t_sim **sim, t_args *args, t_coder *coder, t_dongle *dongle);
 void init_args(char **argv, int nb_coders, t_args **args);
 int init_dongle(char **argv, int nb_coders, t_dongle **dongle);
 int init_coder(t_coder **coder, t_dongle *dongle, t_args *args, t_sim *sim);
+int launch_sim(t_args *args, t_coder *coder, t_sim *sim);
+
 // main
 void* launching_routine(void *args);
 int ft_atoi(const char *nptr);

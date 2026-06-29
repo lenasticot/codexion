@@ -6,7 +6,7 @@
 #    By: leodum <leodum@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/05/27 12:40:03 by leodum            #+#    #+#              #
-#    Updated: 2026/05/27 17:16:22 by leodum           ###   ########.fr        #
+#    Updated: 2026/06/29 16:01:59 by leodum           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,7 +22,8 @@ SRCS	= main.c \
 		  routine.c \
 		  heap.c \
 		  sim.c \
-		  cleaning.c 
+		  cleaning.c \
+		  utils.c
  
 OBJS	= $(SRCS:.c=.o)
  

@@ -6,7 +6,7 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/08 16:43:36 by leodum            #+#    #+#             */
-/*   Updated: 2026/05/11 12:30:18 by leodum           ###   ########.fr       */
+/*   Updated: 2026/06/29 17:52:34 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,24 +22,24 @@ size_t	ft_strlen(const char *s)
 	return (i);
 }
 
-int ft_strcmp(const char *s1, const char *s2)
+int	ft_strcmp(const char *s1, const char *s2)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (s1[i])
 	{
 		if (s1[i] == s2[i])
 			i++;
-		else 
+		else
 			return (0);
 	}
 	if (!s1[i])
 		return (1);
-	return (0);  
+	return (0);
 }
 
-int check_priority_order(char *args)
+int	check_priority_order(char *args)
 {
 	if (ft_strlen(args) != 3 && ft_strlen(args) != 4)
 		return (0);
@@ -56,13 +56,12 @@ int check_priority_order(char *args)
 	return (1);
 }
 
-
-int is_valid_number(char *args)
+int	is_valid_number(char *args)
 {
-	int i;
-	
+	int	i;
+
 	i = 0;
-	while(args[i] == ' ' || args[i] == '\t')
+	while (args[i] == ' ' || args[i] == '\t')
 		i++;
 	if (args[i] == '\0')
 		return (0);
@@ -92,8 +91,7 @@ int	only_int_allowed(char **str)
 			return (0);
 		i++;
 	}
-	if(!check_priority_order(str[i]))
+	if (!check_priority_order(str[i]))
 		return (0);
-
 	return (1);
 }
