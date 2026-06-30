@@ -6,39 +6,38 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/20 12:44:08 by leodum            #+#    #+#             */
-/*   Updated: 2026/05/25 18:54:12 by leodum           ###   ########.fr       */
+/*   Updated: 2026/06/30 15:39:10 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "codexion.h"
+#include "codexion.h"
 
-
-void createHeap(t_heap **c, int capacity)
+void	create_heap(t_heap **c, int capacity)
 {
 	*c = (t_heap *)malloc(sizeof(t_heap));
-		if (!*c)
-			return ;
-		(*c)->arr = (t_entry *)malloc(capacity * sizeof(t_entry));
-		if (!(*c)->arr)
-			return ;
-		(*c)->capacity = capacity;
-		(*c)->heap_size = 0;
+	if (!*c)
+		return ;
+	(*c)->arr = (t_entry *)malloc(capacity * sizeof(t_entry));
+	if (!(*c)->arr)
+		return ;
+	(*c)->capacity = capacity;
+	(*c)->heap_size = 0;
 }
 
-void swap(t_entry *a, t_entry *b)
+void	swap(t_entry *a, t_entry *b)
 {
-	t_entry tmp;
+	t_entry	tmp;
 
 	tmp = *a;
 	*a = *b;
 	*b = tmp;
 }
 
-void orderingKey(int i, int parent, t_heap *c, long int coderChild, long int coderParent)
+void	ordering_key(int i, int parent, t_heap *c)
 {
-	if (coderParent < coderChild)
+	if (c->arr[parent].priority_rank < c->arr[i].priority_rank)
 		return ;
-	else if (coderParent == coderChild)
+	else if (c->arr[parent].priority_rank == c->arr[i].priority_rank)
 	{
 		if (c->arr[parent].nb > c->arr[i].nb)
 			return ;
@@ -47,12 +46,12 @@ void orderingKey(int i, int parent, t_heap *c, long int coderChild, long int cod
 		swap(&c->arr[parent], &c->arr[i]);
 }
 
-void insertKey(t_heap *c, t_coder *coder)
+void	insert_key(t_heap *c, t_coder *coder)
 {
-	int i;
-	int parent;
+	int	i;
+	int	parent;
 
-	if(c->heap_size >= 2)
+	if (c->heap_size >= 2)
 	{
 		printf("\nOverflow: canot insert another key\n");
 		return ;
@@ -61,19 +60,21 @@ void insertKey(t_heap *c, t_coder *coder)
 	i = c->heap_size - 1;
 	c->arr[i].nb = coder->nb;
 	c->arr[i].priority_rank = coder->priority_rank;
-	c->arr[i].deadline = coder->last_time_compiled + coder->args->time_to_burnout;
+	c->arr[i].deadline = coder->last_time_compiled
+		+ coder->args->time_to_burnout;
 	parent = (i - 1) / 2;
 	if (parent == 0)
-		return;
+		return ;
 	if (!strcmp(coder->args->scheduler, "fifo"))
-		orderingKey(i, parent, c, c->arr[i].priority_rank, c->arr[parent].priority_rank);
+		ordering_key(i, parent, c);
 	else if (!strcmp(coder->args->scheduler, "edf"))
-		orderingKey(i, parent, c, c->arr[i].deadline, c->arr[parent].deadline);
+		ordering_key(i, parent, c);
 }
 
-void removeMin(t_heap *c)
+void	remove_min(t_heap *c)
 {
-	t_entry *root;
+	t_entry	*root;
+
 	root = (t_entry *)malloc(sizeof (t_entry));
 	if (!root)
 		return ;

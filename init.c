@@ -6,7 +6,7 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/26 11:30:06 by leodum            #+#    #+#             */
-/*   Updated: 2026/06/29 17:40:19 by leodum           ###   ########.fr       */
+/*   Updated: 2026/06/30 16:33:04 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ int	init_coder(t_coder **coder, t_dongle *dongle, t_args *args, t_sim *sim)
 			% args->nb_coders];
 		(*coder)[i].sim = sim;
 		(*coder)[i].args = args;
-		if (pthread_mutex_init(&(*coder)[i].CoderLock, NULL) != 0)
+		if (pthread_mutex_init(&(*coder)[i].coder_lock, NULL) != 0)
 			return (1);
 		i++;
 	}
@@ -54,10 +54,10 @@ int	init_dongle(char **argv, int nb_coders, t_dongle **dongle)
 		(*dongle)[i].status = 0;
 		(*dongle)[i].time_to_cooldown = ft_atoi(argv[7]);
 		(*dongle)[i].available_to_use = 0;
-		createHeap(&(*dongle)[i].heap, 2);
-		if (pthread_mutex_init(&(*dongle)[i].DongleLock, NULL) != 0)
+		create_heap(&(*dongle)[i].heap, 2);
+		if (pthread_mutex_init(&(*dongle)[i].dongle_lock, NULL) != 0)
 			return (1);
-		pthread_cond_init(&(*dongle)[i].condDongle, NULL);
+		pthread_cond_init(&(*dongle)[i].cond_dongle, NULL);
 		i++;
 	}
 	return (0);

@@ -6,11 +6,28 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/11 12:16:55 by leodum            #+#    #+#             */
-/*   Updated: 2026/06/29 17:56:07 by leodum           ###   ########.fr       */
+/*   Updated: 2026/06/30 16:32:50 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
+
+void	stop_simulation(t_sim *sim)
+{
+	int	i;
+
+	pthread_mutex_lock(&sim->print_message);
+	sim->ongoing = 1;
+	pthread_mutex_unlock(&sim->print_message);
+	i = 0;
+	while (i < sim->nb_coders)
+	{
+		pthread_mutex_lock(&sim->dongles[i].dongle_lock);
+		pthread_cond_broadcast(&sim->dongles[i].cond_dongle);
+		pthread_mutex_unlock(&sim->dongles[i].dongle_lock);
+		i++;
+	}
+}
 
 void	*launching_routine(void *args)
 {

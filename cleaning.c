@@ -6,7 +6,7 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/27 16:47:47 by leodum            #+#    #+#             */
-/*   Updated: 2026/06/29 14:55:04 by leodum           ###   ########.fr       */
+/*   Updated: 2026/06/30 16:33:04 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ int free_coders(t_coder *coder)
 	i = 0;
 	while(i < coder->sim->nb_coders)
 	{
-		pthread_mutex_destroy(&coder[i].CoderLock);
+		pthread_mutex_destroy(&coder[i].coder_lock);
 		i++;
 	}
 	free(coder);
@@ -65,8 +65,8 @@ void free_dongles_and_heap(t_sim *sim)
 			free(sim->dongles[i].heap);
 		}
 			
-		pthread_mutex_destroy(&sim->dongles[i].DongleLock);
-		pthread_cond_destroy(&sim->dongles[i].condDongle);
+		pthread_mutex_destroy(&sim->dongles[i].dongle_lock);
+		pthread_cond_destroy(&sim->dongles[i].cond_dongle);
 		i++;
 	}
 }
