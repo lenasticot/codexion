@@ -6,7 +6,7 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/12 13:38:25 by leodum            #+#    #+#             */
-/*   Updated: 2026/06/30 16:33:04 by leodum           ###   ########.fr       */
+/*   Updated: 2026/07/03 17:11:12 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@ int	take_dongle(t_coder *coder, t_dongle *dongle)
 {
 	pthread_mutex_lock(&dongle->dongle_lock);
 	insert_key(dongle->heap, coder);
-	coder->priority_rank++;
 	while (1)
 	{
 		if (!check_simulation_ongoing(coder->sim))
@@ -63,7 +62,7 @@ void	routine_process(t_coder *coder)
 	pthread_mutex_unlock(&coder->coder_lock);
 	release_dongle(coder, coder->l_dongle);
 	release_dongle(coder, coder->r_dongle);
-	print_status(coder, "is debuging");
+	print_status(coder, "is debugging");
 	usleep(coder->args->time_to_debug * 1000);
 	print_status(coder, "is refactoring");
 	usleep(coder->args->time_to_refactor * 1000);

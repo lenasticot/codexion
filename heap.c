@@ -6,7 +6,7 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/20 12:44:08 by leodum            #+#    #+#             */
-/*   Updated: 2026/07/03 12:49:02 by leodum           ###   ########.fr       */
+/*   Updated: 2026/07/03 13:48:23 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ void	insert_key(t_heap *c, t_coder *coder)
 	c->heap_size++;
 	i = c->heap_size - 1;
 	c->arr[i].nb = coder->nb;
-	c->arr[i].priority_rank = coder->priority_rank;
+	c->arr[i].priority_rank = get_time_ms();
 	c->arr[i].deadline = coder->last_time_compiled
 		+ coder->args->time_to_burnout;
 	parent = (i - 1) / 2;
@@ -75,13 +75,8 @@ void	insert_key(t_heap *c, t_coder *coder)
 
 void	remove_min(t_heap *c)
 {
-	t_entry	*root;
-
-	root = (t_entry *)malloc(sizeof (t_entry));
-	if (!root)
-		return ;
-	*root = c->arr[0];
-	c->arr[0] = c->arr[c->heap_size - 1];
-	c->heap_size--;
-	free(root);
+    if (c->heap_size <= 0)
+        return;
+    c->arr[0] = c->arr[c->heap_size - 1];
+    c->heap_size--;
 }

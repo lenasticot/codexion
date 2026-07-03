@@ -6,7 +6,7 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/11 12:17:04 by leodum            #+#    #+#             */
-/*   Updated: 2026/07/03 12:50:09 by leodum           ###   ########.fr       */
+/*   Updated: 2026/07/03 13:45:57 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ typedef struct dongle
 typedef struct coder
 {
 	int				nb;
-	int				priority_rank;
+	int				priority_rank; // to rename
 	int				nb_dongle;
 	int				nb_of_compiles;
 	long int		last_time_compiled;
