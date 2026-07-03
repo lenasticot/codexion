@@ -6,7 +6,7 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/11 12:17:04 by leodum            #+#    #+#             */
-/*   Updated: 2026/06/30 16:33:04 by leodum           ###   ########.fr       */
+/*   Updated: 2026/07/03 12:50:09 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,6 +143,6 @@ void		swap(t_entry *a, t_entry *b);
 void		insert_key(t_heap *c, t_coder *coder);
 void		remove_min(t_heap *c);
 void		create_heap(t_heap **c, int capacity);
-void		ordering_key(int i, int parent, t_heap *c);
+void	ordering_key(int i, t_heap *c, long int child_val, long int parent_val);
 
 #endif

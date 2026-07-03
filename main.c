@@ -6,7 +6,7 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/11 12:16:55 by leodum            #+#    #+#             */
-/*   Updated: 2026/06/30 16:32:50 by leodum           ###   ########.fr       */
+/*   Updated: 2026/07/03 12:21:42 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,6 @@ void	*launching_routine(void *args)
 	t_coder	*coder;
 
 	coder = (t_coder *) args;
-	printf("Coder %i will start their routine\n", coder->nb);
 	dongle_management(coder, coder->l_dongle, coder->r_dongle);
 	return (NULL);
 }

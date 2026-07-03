@@ -6,7 +6,7 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/18 17:18:07 by leodum            #+#    #+#             */
-/*   Updated: 2026/06/30 16:33:04 by leodum           ###   ########.fr       */
+/*   Updated: 2026/07/03 12:22:57 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ int	check_burnout(t_sim *sim, int i)
 	pthread_mutex_unlock(&sim->coder[i].coder_lock);
 	if (get_time_ms() - last > sim->args->time_to_burnout)
 	{
-		print_status(&sim->coder[i], "has burnout");
+		print_status(&sim->coder[i], "burnout");
 		stop_simulation(sim);
 		return (1);
 	}

@@ -6,29 +6,27 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/27 16:47:47 by leodum            #+#    #+#             */
-/*   Updated: 2026/06/30 16:33:04 by leodum           ###   ########.fr       */
+/*   Updated: 2026/07/03 12:23:43 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
 
-int join_threads(pthread_t thread)
+int	join_threads(pthread_t thread)
 {
 	if (pthread_join(thread, NULL) != 0)
 		return 1;
-	printf("Coder thread returned succesfully\n");
 	return 0;
 }
 
-int join_monitor(pthread_t monitor)
+int	join_monitor(pthread_t monitor)
 {
 	if (pthread_join(monitor, NULL) != 0)
 		return 1;
-	printf("Monitor thread returned succesfully\n");
 	return 0;
 }
 
-int free_coders(t_coder *coder)
+int	free_coders(t_coder *coder)
 {
 	int i;
 	
@@ -42,7 +40,7 @@ int free_coders(t_coder *coder)
 	return 0;	
 }
 
-int free_sim(t_sim *sim)
+int	free_sim(t_sim *sim)
 {
 	pthread_mutex_destroy(&sim->print_message);
 	free(sim->args);
@@ -50,7 +48,7 @@ int free_sim(t_sim *sim)
 	return 0;
 }
 
-void free_dongles_and_heap(t_sim *sim)
+void	free_dongles_and_heap(t_sim *sim)
 {
 	int i;
 
@@ -71,7 +69,7 @@ void free_dongles_and_heap(t_sim *sim)
 	}
 }
 
-int free_them_all(t_sim *sim, t_coder *coder)
+int	free_them_all(t_sim *sim, t_coder *coder)
 {
 	free_dongles_and_heap(sim);
 	free_coders(coder);
