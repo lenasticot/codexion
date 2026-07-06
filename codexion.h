@@ -6,7 +6,7 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/11 12:17:04 by leodum            #+#    #+#             */
-/*   Updated: 2026/07/06 17:29:10 by leodum           ###   ########.fr       */
+/*   Updated: 2026/07/06 18:40:06 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ typedef struct dongle
 	pthread_mutex_t	dongle_lock;
 	pthread_cond_t	cond_dongle;
 	int				time_to_cooldown;
-	int				available_to_use;
+	long int				available_to_use;
 	t_heap			*heap;
 }	t_dongle;
 

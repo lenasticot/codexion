@@ -6,7 +6,7 @@
 #    By: leodum <leodum@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/05/27 12:40:03 by leodum            #+#    #+#              #
-#    Updated: 2026/07/06 16:56:16 by leodum           ###   ########.fr        #
+#    Updated: 2026/07/06 18:44:25 by leodum           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -37,6 +37,10 @@ $(NAME): $(OBJS)
 test: $(NAME)
 	@chmod +x tester_2.sh
 	@./tester_2.sh
+
+test_2: $(NAME)
+	@chmod +x tester.sh
+	@./tester.sh
  
 run: $(NAME)
 	./$(NAME) $($(TEST))

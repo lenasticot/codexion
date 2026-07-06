@@ -1,4 +1,4 @@
-_This project has been created as part of the 42 curriculum by < leodum > ._
+_This project has been created as part of the 42 curriculum by <leodum> _
 
 # Codexion
 
@@ -21,7 +21,6 @@ A dedicated **monitor thread** runs in parallel, checking for burnout conditions
 
 The project explores core concurrent programming concepts: thread creation and synchronization, mutex locks, condition variables, deadlock prevention, starvation avoidance, and precise timing.
 
----
 
 ## Instructions
 
@@ -60,7 +59,6 @@ All time values are in **milliseconds**. The scheduler must be exactly `fifo` or
 | `make fclean`             | Remove object files and binary |
 | `make re`                 | Full recompile                 |
 | `make test`               | Run all predefined test cases  |
-| `make run TEST=TEST_NAME` | Run a single named test        |
 
 ### Arguments
 
@@ -94,16 +92,15 @@ Example:
 405 2 has taken a dongle
 ```
 
----
 
 ## Blocking Cases Handled
 
-### Deadlock prevention — Resource Hierarchy Solution
+### Deadlock prevention — asymetric solution
 
-The classic dining philosophers deadlock occurs when every coder holds their left dongle and waits for their right. Codexion prevents this using the **resource hierarchy solution**: each coder always acquires the dongle with the lower rank first. Since all coders follow the same global ordering, circular waiting (one of Coffman's four conditions for deadlock) is impossible.
+The classic dining philosophers deadlock occurs when every coder holds their left dongle and waits for their right. Codexion prevents this using the **asymetric solution solution**: even coders take one direction first, odd coders the other.  
 
 ```
-if (l_dongle->rank > r_dongle->rank)
+if (coder->nb % 2 == 0) 
     take left first, then right
 else
     take right first, then left
@@ -140,7 +137,6 @@ The burnout message is guaranteed to appear within ~2ms of the actual event (1ms
 
 All state messages are protected by a shared `print_message` mutex to prevent interleaving of output from concurrent threads. Every print goes through `print_status`, which locks before writing and unlocks immediately after, ensuring atomic log entries.
 
----
 
 ## Thread Synchronization Mechanisms
 
@@ -188,22 +184,31 @@ A single monitor thread runs alongside all coder threads. It polls every 1ms and
 
 When stopping the simulation, the monitor sets `ongoing = 1` under the print mutex, then broadcasts on every dongle condition variable to wake all blocked threads so they can exit cleanly.
 
----
+
 
 ## Resources
 
-### Core references
+### General
+- Yassir El Bakkari - Codexion - https://dev.to/yel-bakk/codexion-4fk8
+- Dining Philosophers Problem - https://en.wikipedia.org/wiki/Dining_philosophers_problem
 
-- **"Programming with POSIX Threads"** — David Butenhof. The definitive reference for pthreads, covering mutexes, condition variables, and thread design patterns.
-- **POSIX pthread documentation** — `man pthread_create`, `man pthread_mutex_init`, `man pthread_cond_wait`
-- **Dijkstra's original dining philosophers paper** — E.W. Dijkstra, _Cooperating Sequential Processes_ (1965)
-- **Coffman conditions for deadlock** — E.G. Coffman et al., _System Deadlocks_ (1971)
-- **Resource hierarchy solution** — also attributed to Dijkstra; prevents circular wait by imposing a global resource ordering
-- **Earliest Deadline First scheduling** — Liu & Layland, _Scheduling Algorithms for Multiprogramming in a Hard Real-Time Environment_ (1973)
-- **`gettimeofday` man page** — for millisecond-precision timestamps
-- **Valgrind documentation** — https://valgrind.org/docs/manual/mc-manual.html
-- **Helgrind manual** — https://valgrind.org/docs/manual/hg-manual.html
+### Thread Management
+- GeeksForGeek - Thread Management Function in C : https://www.geeksforgeeks.org/c/thread-functions-in-c-c/
+- GeeksFor Geek - Concurency problems in DBMS Transactions : https://www.geeksforgeeks.org/dbms/concurrency-problems-in-dbms-transactions/
+- LLNL HPC Tutorials - POSIX Threads Programming : https://hpc-tutorials.llnl.gov/posix/
+- CodeVault - Short introduction to threads (pthreads): https://www.youtube.com/watch?v=d9s_d28yJq0&list=PLaRCVIXVlHUQQUQABwr2-oK9kjMcO_2vX&index=5&t=8s
+- Portfolio Courses - Introduction to threads (pthread) | C Programming tutorial: https://www.youtube.com/watch?v=ldJ8WGZVXZk&list=PLaRCVIXVlHUQQUQABwr2-oK9kjMcO_2vX&index=5&t=4s
+- Understanding thread in C, https://medium.com/@akshatarhabib/understanding-threads-in-c-c9feb5e9372a
+- Threads, Mutexes and Concurrent Programming in C, https://www.codequoi.com/en/threads-mutexes-and-concurrent-programming-in-c/
+- Race Conditions: the silent thread in Concurrent systems,  https://medium.com/@arunseetharaman/race-conditions-the-silent-threat-in-concurrent-systems-11c440bd115d
+- Deadlock management  https://en.wikipedia.org/wiki/Deadlock_(computer_science)
 
+### Data Structures and Binary Heap
+- Queue in C, https://www.geeksforgeeks.org/c/queue-in-c/
+- Implementing a queue in C, https://www.youtube.com/watch?v=Ra6p-Bmajlw
+- Understanding Queue Data Structure in C: The First In, First Out Principle, Noran Saber Abdelfattah - https://medium.com/@noransaber685/understanding-queue-data-structures-in-c-the-first-in-first-out-principle-fbd1f89d40dc 
+- Implement a binary heap - An efficient implementation of the Priority Queue AFT (Abstract Data Type) - https://www.youtube.com/watch?v=g9YK6sftDi0
+- Binary Heap - https://www.geeksforgeeks.org/dsa/binary-heap/
 ### AI usage
 
 Claude (Anthropic) was used throughout this project as a **mentor and rubber duck**, specifically:
