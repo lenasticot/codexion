@@ -6,7 +6,7 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/12 13:38:25 by leodum            #+#    #+#             */
-/*   Updated: 2026/07/03 17:11:12 by leodum           ###   ########.fr       */
+/*   Updated: 2026/07/06 16:13:53 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,12 +54,10 @@ void	routine_process(t_coder *coder)
 {
 	pthread_mutex_lock(&coder->coder_lock);
 	coder->last_time_compiled = get_time_ms();
+	coder->nb_of_compiles--;
 	pthread_mutex_unlock(&coder->coder_lock);
 	print_status(coder, "is compiling");
 	usleep(coder->args->time_to_compile * 1000);
-	pthread_mutex_lock(&coder->coder_lock);
-	coder->nb_of_compiles--;
-	pthread_mutex_unlock(&coder->coder_lock);
 	release_dongle(coder, coder->l_dongle);
 	release_dongle(coder, coder->r_dongle);
 	print_status(coder, "is debugging");
@@ -73,7 +71,7 @@ int	dongle_management(t_coder *coder, t_dongle *l_dongle, t_dongle *r_dongle)
 	while (coder->nb_of_compiles != 0)
 	{
 		coder->nb_dongle = 0;
-		if (l_dongle->rank > r_dongle->rank)
+		if (coder->nb % 2 == 0)
 		{
 			if (take_dongle(coder, l_dongle) == 1)
 				return (1);

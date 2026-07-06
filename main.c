@@ -6,7 +6,7 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/11 12:16:55 by leodum            #+#    #+#             */
-/*   Updated: 2026/07/03 17:29:08 by leodum           ###   ########.fr       */
+/*   Updated: 2026/07/06 16:47:32 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void	*launching_routine(void *args)
 	dongle_management(coder, coder->l_dongle, coder->r_dongle);
 	return (NULL);
 }
-//need to make the coders wait and start at the same time
+
 int	launch_sim(t_args *args, t_coder *coder, t_sim *sim)
 {
 	int			i;
@@ -53,7 +53,6 @@ int	launch_sim(t_args *args, t_coder *coder, t_sim *sim)
 		pthread_create(&threads[i], NULL,
 			&launching_routine, (void *) &coder[i]);
 		i++;
-		
 	}
 	pthread_create(&monitor, NULL, &monitor_routine, (void *) sim);
 	join_monitor(monitor);
@@ -73,7 +72,7 @@ void	init_management(char **argv)
 	t_sim		*sim;
 
 	coder = NULL;
-	nb_coders = ft_atoi(argv[1]);
+	nb_coders = atoi(argv[1]);
 	init_args(argv, nb_coders, &args);
 	init_dongle(argv, nb_coders, &dongle);
 	init_sim(&sim, args, coder, dongle);

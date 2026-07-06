@@ -6,7 +6,7 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/20 12:44:08 by leodum            #+#    #+#             */
-/*   Updated: 2026/07/03 13:48:23 by leodum           ###   ########.fr       */
+/*   Updated: 2026/07/06 16:42:31 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,8 +75,8 @@ void	insert_key(t_heap *c, t_coder *coder)
 
 void	remove_min(t_heap *c)
 {
-    if (c->heap_size <= 0)
-        return;
-    c->arr[0] = c->arr[c->heap_size - 1];
-    c->heap_size--;
+	if (c->heap_size <= 0)
+		return ;
+	c->arr[0] = c->arr[c->heap_size - 1];
+	c->heap_size--;
 }

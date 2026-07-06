@@ -6,35 +6,24 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/29 15:10:48 by leodum            #+#    #+#             */
-/*   Updated: 2026/06/30 15:27:43 by leodum           ###   ########.fr       */
+/*   Updated: 2026/07/06 16:48:22 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
 
-int	ft_atoi(const char *nptr)
+int	join_threads(pthread_t thread)
 {
-	int	i;
-	int	result;
-	int	sign;
+	if (pthread_join(thread, NULL) != 0)
+		return (1);
+	return (0);
+}
 
-	result = 0;
-	i = 0;
-	sign = 1;
-	while (nptr[i] == ' ' || (nptr[i] >= 9 && nptr[i] <= 13))
-		i++;
-	if (nptr[i] == '+' || nptr[i] == '-')
-	{
-		if (nptr[i] == '-')
-			sign *= -1;
-		i++;
-	}
-	while (nptr[i] >= '0' && nptr[i] <= '9')
-	{
-		result = result * 10 + (nptr[i] - '0');
-		i++;
-	}
-	return (result * sign);
+int	join_monitor(pthread_t monitor)
+{
+	if (pthread_join(monitor, NULL) != 0)
+		return (1);
+	return (0);
 }
 
 long int	get_time_ms(void)

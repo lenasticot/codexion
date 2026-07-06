@@ -6,7 +6,7 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/26 11:30:06 by leodum            #+#    #+#             */
-/*   Updated: 2026/06/30 16:33:04 by leodum           ###   ########.fr       */
+/*   Updated: 2026/07/06 16:47:49 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,9 +50,8 @@ int	init_dongle(char **argv, int nb_coders, t_dongle **dongle)
 	i = 0;
 	while (i < nb_coders)
 	{
-		(*dongle)[i].rank = i + 1;
 		(*dongle)[i].status = 0;
-		(*dongle)[i].time_to_cooldown = ft_atoi(argv[7]);
+		(*dongle)[i].time_to_cooldown = atoi(argv[7]);
 		(*dongle)[i].available_to_use = 0;
 		create_heap(&(*dongle)[i].heap, 2);
 		if (pthread_mutex_init(&(*dongle)[i].dongle_lock, NULL) != 0)
@@ -69,11 +68,11 @@ void	init_args(char **argv, int nb_coders, t_args **args)
 	if (!*args)
 		return ;
 	(*args)->nb_coders = nb_coders;
-	(*args)->time_to_burnout = ft_atoi(argv[2]);
-	(*args)->time_to_compile = ft_atoi(argv[3]);
-	(*args)->time_to_debug = ft_atoi(argv[4]);
-	(*args)->time_to_refactor = ft_atoi(argv[5]);
-	(*args)->nb_of_compiles = ft_atoi(argv[6]);
+	(*args)->time_to_burnout = atoi(argv[2]);
+	(*args)->time_to_compile = atoi(argv[3]);
+	(*args)->time_to_debug = atoi(argv[4]);
+	(*args)->time_to_refactor = atoi(argv[5]);
+	(*args)->nb_of_compiles = atoi(argv[6]);
 	(*args)->scheduler = argv[8];
 }
 
