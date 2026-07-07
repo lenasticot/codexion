@@ -23,7 +23,6 @@ int	init_coder(t_coder **coder, t_dongle *dongle, t_args *args, t_sim *sim)
 	while (i < args->nb_coders)
 	{
 		(*coder)[i].nb = i + 1;
-		(*coder)[i].priority_rank = 0;
 		(*coder)[i].nb_dongle = 0;
 		(*coder)[i].nb_of_compiles = args->nb_of_compiles;
 		(*coder)[i].last_time_compiled = get_time_ms();

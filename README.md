@@ -114,7 +114,7 @@ Without a scheduler, `pthread_cond_broadcast` wakes all waiting coders and the O
 
 Codexion uses a **per-dongle min-heap** to enforce fair ordering:
 
-- **FIFO**: coders are ordered by `priority_rank`, which increments each time they take a dongle. Coders who have waited longest have the lowest rank and are served first.
+- **FIFO**: coders are ordered by `arrival_ms`, which increments each time they take a dongle. Coders who have waited longest have the lowest rank and are served first.
 - **EDF**: coders are ordered by deadline (`last_compile_start + time_to_burnout`). The coder closest to burning out is served first.
 
 A coder only proceeds when they are at the top of the heap for that dongle, preventing indefinite starvation.

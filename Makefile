@@ -11,10 +11,14 @@
 # **************************************************************************** #
 
 NAME	= codexion
- 
+
 CC		= cc
 CFLAGS	= -Wall -Wextra -Werror -pthread
- 
+INCLUDES = -I includes
+
+SRC_DIR	= srcs
+OBJ_DIR	= objs
+
 SRCS	= main.c \
 		  init.c \
 		  parsing.c \
@@ -23,34 +27,34 @@ SRCS	= main.c \
 		  sim.c \
 		  cleaning.c \
 		  utils.c
- 
-OBJS	= $(SRCS:.c=.o)
+
+SRC		= $(addprefix $(SRC_DIR)/, $(SRCS))
+OBJ		= $(addprefix $(OBJ_DIR)/, $(SRCS:.c=.o))
+
+HEADER	= includes/codexion.h
 
 all: $(NAME)
- 
-$(NAME): $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -o $(NAME)
- 
-%.o: %.c codexion.h
-	$(CC) $(CFLAGS) -c $< -o $@
- 
-test: $(NAME)
-	@chmod +x tester_2.sh
-	@./tester_2.sh
 
-test_2: $(NAME)
-	@chmod +x tester.sh
-	@./tester.sh
- 
+$(NAME): $(OBJ)
+	$(CC) $(CFLAGS) $(OBJ) -o $(NAME)
+
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(HEADER)
+	@mkdir -p $(OBJ_DIR)
+	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+
+test: $(NAME)
+	@chmod +x testers/tester.sh
+	@./testers/tester.sh
+
 run: $(NAME)
 	./$(NAME) $($(TEST))
- 
+
 clean:
-	rm -f $(OBJS)
- 
+	rm -rf $(OBJ_DIR)
+
 fclean: clean
 	rm -f $(NAME)
- 
+
 re: fclean all
 
 .PHONY: all clean fclean re test run

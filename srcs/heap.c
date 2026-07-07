@@ -62,13 +62,13 @@ void	insert_key(t_heap *c, t_coder *coder)
 	c->heap_size++;
 	i = c->heap_size - 1;
 	c->arr[i].nb = coder->nb;
-	c->arr[i].priority_rank = get_time_ms();
+	c->arr[i].arrival_ms = get_time_ms();
 	c->arr[i].deadline = coder->last_time_compiled
 		+ coder->args->time_to_burnout;
 	parent = (i - 1) / 2;
 	if (!strcmp(coder->args->scheduler, "fifo"))
-		ordering_key(i, c, c->arr[i].priority_rank,
-			c->arr[parent].priority_rank);
+		ordering_key(i, c, c->arr[i].arrival_ms,
+			c->arr[parent].arrival_ms);
 	else if (!strcmp(coder->args->scheduler, "edf"))
 		ordering_key(i, c, c->arr[i].deadline, c->arr[parent].deadline);
 }

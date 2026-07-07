@@ -41,14 +41,13 @@ typedef struct dongle
 	pthread_mutex_t	dongle_lock;
 	pthread_cond_t	cond_dongle;
 	int				time_to_cooldown;
-	long int				available_to_use;
+	long int		available_to_use;
 	t_heap			*heap;
 }	t_dongle;
 
 typedef struct coder
 {
 	int				nb;
-	int				priority_rank; // to rename
 	int				nb_dongle;
 	int				nb_of_compiles;
 	long int		last_time_compiled;
@@ -62,7 +61,7 @@ typedef struct coder
 typedef struct heap_entry
 {
 	int			nb;
-	long int	priority_rank;
+	long int	arrival_ms;
 	long int	deadline;
 }	t_entry;
 
