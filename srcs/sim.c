@@ -6,7 +6,7 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/18 17:18:07 by leodum            #+#    #+#             */
-/*   Updated: 2026/07/06 16:44:42 by leodum           ###   ########.fr       */
+/*   Updated: 2026/07/08 17:21:33 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,8 +44,12 @@ int	check_compilation_nb(t_sim *sim)
 int	check_burnout(t_sim *sim, int i)
 {
 	long int	last;
-
 	pthread_mutex_lock(&sim->coder[i].coder_lock);
+	if (sim->coder[i].nb_of_compiles == 0)
+	{
+		pthread_mutex_unlock(&sim->coder[i].coder_lock);
+		return (0);
+	}
 	last = sim->coder[i].last_time_compiled;
 	pthread_mutex_unlock(&sim->coder[i].coder_lock);
 	if (get_time_ms() - last > sim->args->time_to_burnout)
@@ -57,7 +61,6 @@ int	check_burnout(t_sim *sim, int i)
 	return (0);
 }
 
-// need to double check this one
 void	check_avail_dongle(t_sim *sim, int i)
 {
 	pthread_mutex_lock(&sim->dongles[i].dongle_lock);

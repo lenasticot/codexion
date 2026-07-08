@@ -6,7 +6,7 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/20 12:44:08 by leodum            #+#    #+#             */
-/*   Updated: 2026/07/06 16:42:31 by leodum           ###   ########.fr       */
+/*   Updated: 2026/07/08 17:24:09 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ void	insert_key(t_heap *c, t_coder *coder)
 
 	if (c->heap_size >= 2)
 	{
-		printf("\nOverflow: canot insert another key\n");
+		printf("\nOverflow: canot insert another key of coder %i\n", coder->nb);
 		return ;
 	}
 	c->heap_size++;
@@ -66,6 +66,9 @@ void	insert_key(t_heap *c, t_coder *coder)
 	c->arr[i].deadline = coder->last_time_compiled
 		+ coder->args->time_to_burnout;
 	parent = (i - 1) / 2;
+	// maybe the problem is that if the heap is empty
+	if (parent < 0)
+		return ;
 	if (!strcmp(coder->args->scheduler, "fifo"))
 		ordering_key(i, c, c->arr[i].arrival_ms,
 			c->arr[parent].arrival_ms);

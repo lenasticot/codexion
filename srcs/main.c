@@ -6,7 +6,7 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/11 12:16:55 by leodum            #+#    #+#             */
-/*   Updated: 2026/07/06 16:47:32 by leodum           ###   ########.fr       */
+/*   Updated: 2026/07/08 16:42:17 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ void	*launching_routine(void *args)
 	t_coder	*coder;
 
 	coder = (t_coder *) args;
-	dongle_management(coder, coder->l_dongle, coder->r_dongle);
+	dongle_management_v2(coder);
 	return (NULL);
 }
 
@@ -84,6 +84,12 @@ void	init_management(char **argv)
 
 int	main(int argc, char **argv)
 {
+	if (atoi(argv[6]) == 0 || atoi(argv[1]) == 0)
+	{
+		printf("Number provided cannot be 0, provide a valid number\n");
+		return (1);
+	}
+		
 	if (argc != 9)
 	{
 		printf("You need to provide 7 int +"

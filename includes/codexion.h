@@ -6,7 +6,7 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/11 12:17:04 by leodum            #+#    #+#             */
-/*   Updated: 2026/07/06 18:40:06 by leodum           ###   ########.fr       */
+/*   Updated: 2026/07/08 14:44:24 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,6 +125,7 @@ void		release_dongle(t_coder *coder, t_dongle *dongle);
 void		routine_process(t_coder *coder);
 int			dongle_management(t_coder *coder, t_dongle *l_dongle,
 				t_dongle *r_dongle);
+int	dongle_management_v2(t_coder *coder);
 
 // sim
 
