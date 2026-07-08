@@ -6,7 +6,7 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/18 17:18:07 by leodum            #+#    #+#             */
-/*   Updated: 2026/07/08 17:21:33 by leodum           ###   ########.fr       */
+/*   Updated: 2026/07/08 18:23:37 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,13 +61,13 @@ int	check_burnout(t_sim *sim, int i)
 	return (0);
 }
 
-void	check_avail_dongle(t_sim *sim, int i)
-{
-	pthread_mutex_lock(&sim->dongles[i].dongle_lock);
-	if (sim->dongles[i].available_to_use <= get_time_ms())
-		pthread_cond_broadcast(&sim->dongles[i].cond_dongle);
-	pthread_mutex_unlock(&sim->dongles[i].dongle_lock);
-}
+// void	check_avail_dongle(t_sim *sim, int i)
+// {
+// 	pthread_mutex_lock(&sim->dongles[i].dongle_lock);
+// 	if (sim->dongles[i].available_to_use <= get_time_ms())
+// 		pthread_cond_broadcast(&sim->dongles[i].cond_dongle);
+// 	pthread_mutex_unlock(&sim->dongles[i].dongle_lock);
+// }
 
 void	*monitor_routine(void *monitor)
 {
@@ -83,7 +83,7 @@ void	*monitor_routine(void *monitor)
 		{
 			if (check_burnout(sim, i) == 1)
 				return (NULL);
-			check_avail_dongle(sim, i);
+			// check_avail_dongle(sim, i);
 			i++;
 		}
 		if (check_compilation_nb(sim) == 1)

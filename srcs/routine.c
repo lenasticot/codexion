@@ -6,52 +6,52 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/12 13:38:25 by leodum            #+#    #+#             */
-/*   Updated: 2026/07/08 17:47:38 by leodum           ###   ########.fr       */
+/*   Updated: 2026/07/08 18:53:23 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
 
 
-int	take_dongle(t_coder *coder, t_dongle *dongle)
-{
-	pthread_mutex_lock(&dongle->dongle_lock);
-	insert_key(dongle->heap, coder);
-	while (1)
-	{
-		if (!check_simulation_ongoing(coder->sim))
-		{
-			pthread_mutex_unlock(&dongle->dongle_lock);
-			return (1);
-		}
-		if (dongle->status == 0
-			&& dongle->heap->arr[0].nb == coder->nb
-			&& dongle->available_to_use <= get_time_ms())
-		{
-			dongle->status = 1;
-			coder->nb_dongle++;
-			remove_min(dongle->heap);
-			pthread_mutex_unlock(&dongle->dongle_lock);
-			print_status(coder, "has taken a dongle");
-			return (0);
-		}
-		else
-			pthread_cond_wait(&dongle->cond_dongle, &dongle->dongle_lock);
-	}
-	return (1);
-}
+// int	take_dongle(t_coder *coder, t_dongle *dongle)
+// {
+// 	pthread_mutex_lock(&dongle->dongle_lock);
+// 	insert_key(dongle->heap, coder);
+// 	while (1)
+// 	{
+// 		if (!check_simulation_ongoing(coder->sim))
+// 		{
+// 			pthread_mutex_unlock(&dongle->dongle_lock);
+// 			return (1);
+// 		}
+// 		if (dongle->status == 0
+// 			&& dongle->heap->arr[0].nb == coder->nb
+// 			&& dongle->available_to_use <= get_time_ms())
+// 		{
+// 			dongle->status = 1;
+// 			coder->nb_dongle++;
+// 			remove_min(dongle->heap);
+// 			pthread_mutex_unlock(&dongle->dongle_lock);
+// 			print_status(coder, "has taken a dongle");
+// 			return (0);
+// 		}
+// 		else
+// 			pthread_cond_wait(&dongle->cond_dongle, &dongle->dongle_lock);
+// 	}
+// 	return (1);
+// }
 
 void	release_dongles(t_coder *coder, t_dongle *l_dongle, t_dongle *r_dongle)
 {
 	pthread_mutex_lock(&l_dongle->dongle_lock);
 	l_dongle->status = 0;
 	l_dongle->available_to_use = l_dongle->time_to_cooldown + get_time_ms();
-	pthread_cond_broadcast(&l_dongle->cond_dongle);
+	// pthread_cond_broadcast(&l_dongle->cond_dongle);
 	pthread_mutex_unlock(&l_dongle->dongle_lock);
 	pthread_mutex_lock(&r_dongle->dongle_lock);
 	r_dongle->status = 0;
 	r_dongle->available_to_use = r_dongle->time_to_cooldown + get_time_ms();
-	pthread_cond_broadcast(&r_dongle->cond_dongle);
+	// pthread_cond_broadcast(&r_dongle->cond_dongle);
 	pthread_mutex_unlock(&r_dongle->dongle_lock);
 	coder->nb_dongle = 0;
 }
@@ -116,45 +116,30 @@ int enque_dongle(t_coder *coder)
 
 int	dongle_management_v2(t_coder *coder)
 {
+	t_dongle	*lo;
+	t_dongle	*hi;
+
 	if (coder->l_dongle == coder->r_dongle)
 		return (0);
+	lo = coder->l_dongle;
+	hi = coder->r_dongle;
+	if (coder->r_dongle < coder->l_dongle)
+	{
+		lo = coder->r_dongle;
+		hi = coder->l_dongle;
+	}
+	if (coder->nb % 2 == 0)
+		usleep(2000);
 	while (coder->nb_of_compiles > 0)
 	{
 		enque_dongle(coder);
-		while (!try_take_both(coder, coder->r_dongle, coder->l_dongle))
+		while (!try_take_both(coder, lo, hi))
 		{
 			if (!check_simulation_ongoing(coder->sim))
 				return (1);
 			usleep(500);
 		}
-	routine_process(coder);
+		routine_process(coder);
 	}
 	return (0);
 }
-
-// int	dongle_management(t_coder *coder, t_dongle *l_dongle, t_dongle *r_dongle)
-// {
-// 	if (coder->nb % 2 == 0)
-// 		usleep(1000);
-// 	while (coder->nb_of_compiles != 0)
-// 	{
-// 		coder->nb_dongle = 0;
-// 		if (coder->nb % 2 == 0)
-// 		{
-// 			if (take_dongle(coder, l_dongle) == 1)
-// 				return (1);
-// 			if (take_dongle(coder, r_dongle) == 1)
-// 				return (1);
-// 		}
-// 		else
-// 		{
-// 			if (take_dongle(coder, r_dongle) == 1)
-// 				return (1);
-// 			if (take_dongle(coder, l_dongle) == 1)
-// 				return (1);
-// 		}
-// 		if (coder->nb_dongle == 2)
-// 			routine_process(coder);
-// 	}
-// 	return (0);
-// }

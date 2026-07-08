@@ -6,7 +6,7 @@
 /*   By: leodum <leodum@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/20 12:44:08 by leodum            #+#    #+#             */
-/*   Updated: 2026/07/08 17:24:09 by leodum           ###   ########.fr       */
+/*   Updated: 2026/07/08 19:19:15 by leodum           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,8 +42,8 @@ void	ordering_key(int i, t_heap *c, long int child_val, long int parent_val)
 		return ;
 	else if (parent_val == child_val)
 	{
-		if (c->arr[parent].nb > c->arr[i].nb)
-			return ;
+    	if (c->arr[parent].nb > c->arr[i].nb)
+    	    return ;
 	}
 	else
 		swap(&c->arr[parent], &c->arr[i]);
